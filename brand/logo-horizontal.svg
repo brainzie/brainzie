@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Brainzie primary lockup (horizontal). Wordmark set in Space Grotesk 700 — outline to paths before distributing. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 100" width="360" height="100" role="img" aria-label="Brainzie">
+  <g>
+    <g fill="none" stroke="#D81B72" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="24,72 18,54 22,36 34,24 50,19 66,24 78,36 82,54 76,72"/>
+    </g>
+    <g fill="#D81B72">
+      <circle cx="24" cy="72" r="4.2"/><circle cx="18" cy="54" r="4.2"/><circle cx="22" cy="36" r="4.2"/>
+      <circle cx="34" cy="24" r="4.2"/><circle cx="50" cy="19" r="4.2"/><circle cx="66" cy="24" r="4.2"/>
+      <circle cx="78" cy="36" r="4.2"/><circle cx="82" cy="54" r="4.2"/><circle cx="76" cy="72" r="4.2"/>
+    </g>
+    <g fill="none" stroke="#D81B72" stroke-width="6" stroke-linecap="round">
+      <path d="M32 57 H68"/><path d="M42 57 V79"/><path d="M58 57 V79"/>
+    </g>
+  </g>
+  <text x="114" y="65" font-family="'Space Grotesk', 'Segoe UI', sans-serif" font-size="52" font-weight="700" letter-spacing="-1.5" fill="#18122B">Brainzie</text>
+</svg>

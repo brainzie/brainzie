@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Brand Guidelines — Brainzie</title>
+  <meta name="description" content="The Brainzie brand system: logo, magenta palette, typography, voice and usage rules." />
+  <link rel="icon" href="brand/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/brainzie.css" />
+  <style>
+    .gl { display:grid; gap:18px; }
+    .swatches { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-top:16px; }
+    .sw { border:1px solid var(--line); border-radius:var(--radius-s); overflow:hidden; }
+    .sw .chip { height:96px; }
+    .sw .meta { padding:12px 14px; font-family:var(--font-display); }
+    .sw .meta .nm { font-weight:600; font-size:.92rem; }
+    .sw .meta .hx { color:var(--muted); font-size:.82rem; }
+    .logo-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:16px; }
+    .logo-box { border:1px solid var(--line); border-radius:var(--radius-s); padding:26px; display:grid; place-items:center; min-height:130px; }
+    .logo-box.dark { background:var(--ink); }
+    .logo-box.brand { background:var(--brand); }
+    .logo-box .cap { font-family:var(--font-display); font-size:.78rem; color:var(--muted); }
+    .twocol { display:grid; grid-template-columns:1fr 1fr; gap:22px; }
+    .do { border-left:4px solid #18a06b; background:#eafaf3; border-radius:0 var(--radius-s) var(--radius-s) 0; padding:14px 18px; }
+    .dont { border-left:4px solid var(--accent-coral); background:#fff0f3; border-radius:0 var(--radius-s) var(--radius-s) 0; padding:14px 18px; }
+    .spec { font-family:var(--font-display); }
+    @media(max-width:700px){ .swatches,.logo-grid{grid-template-columns:1fr 1fr} .twocol{grid-template-columns:1fr} }
+  </style>
+</head>
+<body>
+  <header class="nav"><div class="wrap nav-inner">
+    <a class="brand" href="index.html"><img class="mark" src="brand/logo-icon.svg" alt="" /><span class="name">Brainzie</span></a>
+    <nav class="nav-links"><a href="courses.html">Courses</a><a href="software.html">Software</a><a href="about.html">About</a><a href="contact.html" class="btn btn-primary nav-cta">Contact</a></nav>
+  </div></header>
+
+  <div class="pagehead"><div class="wrap">
+    <div class="crumbs"><a href="index.html">Home</a> / Brand guidelines</div>
+    <h1>Brand guidelines</h1>
+    <p class="lead">A short, working guide to keep Brainzie looking like Brainzie everywhere it appears. Magenta-led, clean, energetic and confident.</p>
+  </div></div>
+
+  <section><div class="wrap prose" style="max-width:900px">
+
+    <!-- LOGO -->
+    <h2>The logo</h2>
+    <p>The Brainzie mark is a <strong>brain drawn as a circuit of connected nodes, with an embedded π</strong> — science and computing in one symbol. Use the supplied vector files; never redraw it.</p>
+    <div class="logo-grid">
+      <div><div class="logo-box"><img src="brand/logo-horizontal.svg" alt="Brainzie horizontal lockup" /></div><div class="cap">Primary · horizontal lockup</div></div>
+      <div><div class="logo-box"><img src="brand/logo-stacked.svg" alt="Brainzie stacked lockup" style="max-height:120px" /></div><div class="cap">Stacked lockup</div></div>
+      <div><div class="logo-box"><img src="brand/logo-icon.svg" alt="Brainzie icon" style="width:84px" /></div><div class="cap">Icon only</div></div>
+      <div><div class="logo-box brand"><img src="brand/logo-mono-white.svg" alt="Brainzie reversed" /></div><div class="cap">Reversed (on magenta)</div></div>
+      <div><div class="logo-box dark"><img src="brand/logo-mono-white.svg" alt="Brainzie reversed on ink" /></div><div class="cap">Mono white (on dark)</div></div>
+      <div><div class="logo-box"><img src="brand/favicon.svg" alt="Brainzie app icon" style="width:72px" /></div><div class="cap">App icon / favicon</div></div>
+    </div>
+    <h3>Clear space &amp; minimum size</h3>
+    <ul>
+      <li>Keep clear space around the logo equal to the height of the π in the mark.</li>
+      <li>Minimum size: <strong>24&nbsp;px</strong> tall for the icon on screen; <strong>120&nbsp;px</strong> wide for the horizontal lockup.</li>
+      <li>For embroidery, engraving or single-colour print, use the <strong>mono</strong> versions.</li>
+      <li>Before distributing the lockup files, convert the "Brainzie" wordmark from live text to outlines so it renders without the font installed.</li>
+    </ul>
+
+    <!-- COLOUR -->
+    <h2>Colour</h2>
+    <p>Magenta is the signature — it should do most of the brand’s work. Violet supports; orange and coral are sparks used sparingly. The warm gradient is an <em>occasional</em> flourish, never the whole identity.</p>
+    <div class="swatches">
+      <div class="sw"><div class="chip" style="background:#D81B72"></div><div class="meta"><div class="nm">Brand magenta</div><div class="hx">#D81B72 · primary</div></div></div>
+      <div class="sw"><div class="chip" style="background:#A8155A"></div><div class="meta"><div class="nm">Magenta deep</div><div class="hx">#A8155A · hovers</div></div></div>
+      <div class="sw"><div class="chip" style="background:#FCE4F0"></div><div class="meta"><div class="nm">Magenta tint</div><div class="hx">#FCE4F0 · fills</div></div></div>
+      <div class="sw"><div class="chip" style="background:#6D28D9"></div><div class="meta"><div class="nm">Violet</div><div class="hx">#6D28D9 · secondary</div></div></div>
+      <div class="sw"><div class="chip" style="background:#FB8B24"></div><div class="meta"><div class="nm">Orange spark</div><div class="hx">#FB8B24 · accent</div></div></div>
+      <div class="sw"><div class="chip" style="background:#FF4D6D"></div><div class="meta"><div class="nm">Coral</div><div class="hx">#FF4D6D · one action</div></div></div>
+      <div class="sw"><div class="chip" style="background:#18122B"></div><div class="meta"><div class="nm">Ink</div><div class="hx">#18122B · text</div></div></div>
+      <div class="sw"><div class="chip" style="background:#FDFBFE;border-bottom:1px solid var(--line)"></div><div class="meta"><div class="nm">Paper</div><div class="hx">#FDFBFE · background</div></div></div>
+    </div>
+    <p style="margin-top:16px"><span style="display:inline-block;height:46px;width:100%;border-radius:10px;background:linear-gradient(135deg,#FB8B24,#D81B72 55%,#6D28D9)"></span></p>
+    <p class="spec" style="color:var(--muted);font-size:.85rem">Flourish gradient — a rare accent only.</p>
+    <div class="callout"><strong>Accessibility:</strong> magenta and orange are fine for large text and buttons (with white text), but fail contrast for small body copy — keep paragraphs in Ink (#18122B).</div>
+
+    <!-- TYPE -->
+    <h2>Typography</h2>
+    <div class="twocol">
+      <div>
+        <p class="spec" style="font-size:2rem;font-weight:700">Space Grotesk</p>
+        <p>Display &amp; headings. Geometric, distinctive, friendly. Weights 500–700.</p>
+      </div>
+      <div>
+        <p style="font-size:2rem;font-weight:700;font-family:var(--font-body)">Inter</p>
+        <p style="font-family:var(--font-body)">Body &amp; UI. A clean, highly readable workhorse. Weights 400–700.</p>
+      </div>
+    </div>
+    <p style="margin-top:12px">Both are free, open-source and load from Google Fonts. Headings use tight letter-spacing (≈ −0.02em); body stays at default spacing for readability.</p>
+
+    <!-- VOICE -->
+    <h2>Voice &amp; tone</h2>
+    <ul>
+      <li><strong>Clear, never condescending.</strong> Explain hard things simply; trust the reader.</li>
+      <li><strong>Warm and confident.</strong> We’re passionate, not hype-y.</li>
+      <li><strong>Honest.</strong> We say what something is and isn’t. No overselling.</li>
+      <li><strong>Tagline:</strong> "Nurturing brains, helping everyone, always improving."</li>
+    </ul>
+
+    <!-- DO / DON'T -->
+    <h2>Do &amp; don’t</h2>
+    <div class="twocol">
+      <div class="do"><strong>Do</strong><ul style="margin:8px 0 0 1rem"><li>Lead with magenta.</li><li>Give the logo room to breathe.</li><li>Use the mono logo on busy or dark backgrounds.</li><li>Keep body text in Ink.</li></ul></div>
+      <div class="dont"><strong>Don’t</strong><ul style="margin:8px 0 0 1rem"><li>Recolour or stretch the logo.</li><li>Make the gradient the whole identity.</li><li>Place the colour logo on a clashing colour.</li><li>Set small body text in magenta or orange.</li></ul></div>
+    </div>
+
+    <h2>Product naming</h2>
+    <p>Brainzie is a <strong>branded house</strong>: one master brand, products named by plain descriptors — <strong>Brainzie Academy</strong> (courses), <strong>Brainzie Swim</strong>, <strong>Brainzie Money</strong>. Every product borrows, and builds, the Brainzie name.</p>
+
+    <p style="margin-top:28px"><a class="btn btn-ghost" href="index.html">← Back to home</a></p>
+  </div></section>
+
+  <footer><div class="wrap foot-grid">
+    <div><div class="foot-brand"><img class="mark" src="brand/logo-icon.svg" alt="" style="width:34px;height:34px" /><span class="name">Brainzie</span></div>
+    <p style="color:#9b93b3;max-width:34ch;margin-top:12px;font-size:.92rem">Nurturing brains, helping everyone, always improving.</p></div>
+    <div class="foot-col"><h5>Learn</h5><a href="courses.html">Courses</a><a href="about.html">Our approach</a></div>
+    <div class="foot-col"><h5>Build</h5><a href="software.html">Software</a><a href="product-swim.html">Brainzie Swim</a><a href="product-finance.html">Brainzie Money</a></div>
+    <div class="foot-col"><h5>Company</h5><a href="contact.html">Contact</a><a href="brand-guidelines.html">Brand guidelines</a></div>
+    <p class="foot-note">© 2026 Brainzie Ltd · Nurturing brains, helping everyone, always improving.</p>
+  </div></footer>
+</body>
+</html>
