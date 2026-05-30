@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://brainzie.co.uk/sitemap.xml
