@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Professional Software Development — For Beginners (1st Edition) — Brainzie</title>
-  <meta name="description" content="Professional Software Development, 1st Edition (Beginners): a from-scratch grounding in programming, version control and shipping a first working application." />
+  <meta name="description" content="Professional Software Development, 1st Edition (Beginners): from how software runs, through C# fundamentals, to building dynamic web apps with Blazor." />
   <link rel="icon" href="brand/favicon.svg" type="image/svg+xml" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -21,35 +21,40 @@
     <div class="crumbs"><a href="index.html">Home</a> / <a href="courses.html">Courses</a> / Software Development — Beginners (1st)</div>
     <p class="eyebrow">Professional Software Development · 1st Edition</p>
     <h1>Software Development — For Beginners</h1>
-    <p class="lead">A from-scratch grounding in programming, taught the way it’s actually practised — ending with a real, working application built by each student.</p>
+    <p class="lead">A from-scratch grounding in real software development: from understanding how code runs, through the fundamentals of C#, to building genuinely interactive web applications with Blazor.</p>
   </div></div>
 
   <section><div class="wrap prose">
     <div class="factbar">
       <div class="f"><div class="k">Edition</div><div class="v">1st · Beginners</div></div>
       <div class="f"><div class="k">Dates</div><div class="v">23 Apr – 16 Jul 2025</div></div>
-      <div class="f"><div class="k">Format</div><div class="v">Weekly · 12 sessions</div></div>
-      <div class="f"><div class="k">Partner</div><div class="v">Townley · AMBIT STEM</div></div>
+      <div class="f"><div class="k">Format</div><div class="v">Weekly · 11 sessions</div></div>
+      <div class="f"><div class="k">Partner</div><div class="v">Townley Grammar School</div></div>
     </div>
 
     <h2>Overview</h2>
-    <p>This was the launch of our second flagship programme: not "coding club", but <em>professional</em> software development for complete beginners. Over twelve weekly sessions students went from never having written a line of code to building and running something real — and, just as importantly, learning the habits that separate a working program from a well-made one.</p>
+    <p>The launch of our second flagship programme: not "coding club", but <em>professional</em> software development for complete beginners. Students built a clear mental model of how software works, learned the fundamentals of C# in Visual Studio, and finished by building dynamic web pages with HTML, CSS and Blazor — the real toolset of a working developer.</p>
 
-    <h2>What students explored</h2>
-    <ul>
-      <li><strong>How programs actually run</strong> — a clear mental model before the syntax.</li>
-      <li><strong>The building blocks</strong> — variables and types, conditionals, loops and functions.</li>
-      <li><strong>The debugging mindset</strong> — reading errors calmly and reasoning to the cause.</li>
-      <li><strong>Version control</strong> — the basics of Git and why every professional uses it.</li>
-      <li><strong>Building a first project</strong> — planning, building and iterating a working application.</li>
-      <li><strong>Reading code</strong> — understanding code you didn’t write, a daily real-world skill.</li>
-    </ul>
+    <h2>Session by session</h2>
+    <ol class="sessions">
+      <li><span class="s-n">1</span><div><h4>What software is: hardware, ISAs &amp; compilers</h4><p>Defined software and hardware (CPU, RAM, transistors), introduced instruction set architectures as the hardware–software interface, and showed how tedious raw machine code is. Covered abstraction, compilers and interpreters, with a "hello world" C# warm-up and a spreadsheet used as an "interpreter".</p></div></li>
+      <li><span class="s-n">2</span><div><h4>From spreadsheets to C# in Visual Studio</h4><p>Introduced variables and control structures and the idea of an IDE, then built a real C# console program that stores values, adds them and prints results — adding user input with Console.ReadLine and stressing the user's perspective.</p></div></li>
+      <li><span class="s-n">3</span><div><h4>Conditionals &amp; code blocks</h4><p>Introduced braces and if/else conditionals and the role of indentation, clarified assignment (=) versus equality (==) and the modulus operator, with an exercise testing whether numbers are even/odd or in range, shown in colour.</p></div></li>
+      <li><span class="s-n">4</span><div><h4>Loops plus conditionals</h4><p>Introduced the while loop alongside operators like % and i++, with exercises listing numbers in a range and a number's divisors, culminating in a name-and-birth-year "house-sorting" game combining the ideas.</p></div></li>
+      <li><span class="s-n">5</span><div><h4>DRY code with functions</h4><p>Introduced functions as reusable blocks following the Don't-Repeat-Yourself principle, refactoring earlier programs to remove duplication, building input-reading helpers and validating input with int.TryParse.</p></div></li>
+      <li><span class="s-n">6</span><div><h4>Classes &amp; organising larger codebases</h4><p>Set a Roman-numeral challenge and recapped the fundamentals, then introduced classes as a way to bundle data and behaviour for reuse — illustrated with a Dog class and a Bark method.</p></div></li>
+      <li><span class="s-n">7</span><div><h4>Building web pages with HTML &amp; CSS</h4><p>Introduced HTML as a tag-based language, the document structure, attributes and inline CSS styling, and how a page combines HTML, CSS and JavaScript — using browser Dev Tools to inspect and modify live pages.</p></div></li>
+      <li><span class="s-n">8</span><div><h4>Dynamic web pages with Blazor</h4><p>Contrasted static HTML with interactive pages and introduced Blazor for generating HTML with C#. Students created a Blazor WebAssembly app in Visual Studio, ran it, and explored the Razor-based Home and Counter pages.</p></div></li>
+      <li><span class="s-n">9</span><div><h4>Blazor: Razor syntax &amp; events</h4><p>Broke down a Blazor page, explaining how @ switches from HTML to C# and how @onclick wires events to C# functions, through "spot the error" and "what does it do" exercises.</p></div></li>
+      <li><span class="s-n">10</span><div><h4>Blazor: data binding &amp; input</h4><p>Focused on data binding with @bind-value on inputs and reading mouse events with @onmousemove, combining live mouse-coordinate display with a number input that drives font size.</p></div></li>
+      <li><span class="s-n">11</span><div><h4>Blazor: mixing C# and HTML with Razor</h4><p>Focused on embedding C# in Razor — @if/else conditional rendering and switching modes between markup and code — with exercises computing and displaying results inline and combining numeric inputs.</p></div></li>
+    </ol>
 
     <h2>Skills developed</h2>
     <ul>
-      <li>Programming fundamentals that transfer to any language.</li>
-      <li>Breaking a problem down and debugging methodically.</li>
-      <li>Working like a developer — version control and shipping something finished.</li>
+      <li>Programming fundamentals in C# that transfer to any language.</li>
+      <li>Breaking problems down, debugging, and writing reusable code.</li>
+      <li>Building real, interactive web applications end to end.</li>
     </ul>
 
     <p style="margin-top:26px"><a class="btn btn-ghost" href="courses.html">← Back to all courses</a></p>
@@ -61,7 +66,7 @@
     <div class="foot-col"><h5>Learn</h5><a href="courses.html">Courses</a><a href="about.html">Our approach</a></div>
     <div class="foot-col"><h5>Build</h5><a href="software.html">Software</a><a href="product-swim.html">Brainzie Swim</a><a href="product-finance.html">Brainzie Money</a></div>
     <div class="foot-col"><h5>Company</h5><a href="contact.html">Contact</a><a href="brand-guidelines.html">Brand guidelines</a></div>
-    <p class="foot-note">© 2026 Brainzie Ltd · Delivered with Townley Grammar School’s AMBIT STEM enrichment.</p>
+    <p class="foot-note">© 2026 Brainzie Ltd · Delivered with Townley Grammar School.</p>
   </div></footer>
 </body>
 </html>
