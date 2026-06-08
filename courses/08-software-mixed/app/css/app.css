@@ -1,0 +1,50 @@
+/* Chromeless host — these pages are embedded in iframes inside the lesson.
+   Keep the background transparent so the demo blends into the lesson panel. */
+
+html, body {
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    font-family: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+    color: #18122B;
+}
+
+.boot {
+    font-family: system-ui, sans-serif;
+    color: #847B9C;
+    padding: 24px;
+    text-align: center;
+}
+
+.demo-host {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    min-height: 100vh;
+    padding: 28px 20px;
+    box-sizing: border-box;
+}
+
+/* Catalog (only seen if you open the app root directly, not embedded) */
+.catalog { max-width: 560px; margin: 40px auto; padding: 0 20px; font-family: inherit; }
+.catalog h1 { font-size: 1.4rem; }
+.catalog a { display: block; padding: 10px 0; color: #A8155A; }
+
+#blazor-error-ui {
+    color-scheme: light only;
+    display: none;
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: #FCE4F0;
+    color: #A8155A;
+    padding: 10px 16px;
+    font-family: system-ui, sans-serif;
+    font-size: .9rem;
+    z-index: 1000;
+}
+#blazor-error-ui .dismiss { cursor: pointer; float: right; }
+
+.blazor-error-boundary { background: #b32121; padding: 1rem; color: white; }
+.blazor-error-boundary::after { content: "An error has occurred."; }

@@ -1,3 +1,9 @@
 node_modules/
 .DS_Store
 Thumbs.db
+
+# Blazor build intermediates (the published static output under
+# courses/<slug>/app IS committed and served; these are not).
+apps-src/**/bin/
+apps-src/**/obj/
+apps-src/_publish/

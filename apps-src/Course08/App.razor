@@ -1,0 +1,42 @@
+@inject NavigationManager Nav
+@implements IDisposable
+
+@*
+    No <Router> here on purpose.
+
+    These pages are embedded as iframes inside the static lesson pages, and the
+    whole site is hosted on GitHub Pages — which only serves ONE site-wide
+    404.html (at the repo root), so a sub-folder SPA cannot rely on path-based
+    deep links. Instead we select the page from the URL *fragment* (the bit
+    after '#'), which the browser never sends to the server. The iframe always
+    loads this app's real index.html (HTTP 200) and we pick the page here.
+
+    Fragments map to: #/<course>/<lesson>/<demo|exercise>
+*@
+
+<LayoutView Layout="typeof(MainLayout)">
+    @switch (Page)
+    {
+        case "08/lesson-01-button/demo":
+            <Lesson01ButtonDemo />
+            break;
+
+        case "08/lesson-01-button/exercise":
+            <Lesson01ButtonExercise />
+            break;
+
+        default:
+            <Catalog />
+            break;
+    }
+</LayoutView>
+
+@code {
+    private string Page => new Uri(Nav.Uri).Fragment.TrimStart('#').Trim('/');
+
+    protected override void OnInitialized() => Nav.LocationChanged += OnLocationChanged;
+
+    private void OnLocationChanged(object? sender, LocationChangedEventArgs e) => StateHasChanged();
+
+    public void Dispose() => Nav.LocationChanged -= OnLocationChanged;
+}

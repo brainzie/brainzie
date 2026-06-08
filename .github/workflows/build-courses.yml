@@ -1,0 +1,58 @@
+name: Build course apps
+
+# Rebuilds the Blazor WebAssembly app for each course whenever its source
+# under apps-src/ changes, then commits the regenerated static output back to
+# courses/<slug>/app. The live site (GitHub Pages, served from this branch)
+# then picks it up automatically — no local Visual Studio / dotnet needed.
+#
+# Free on public repositories. No GitHub Pages settings change required.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'apps-src/**'
+      - '.github/workflows/build-courses.yml'
+  workflow_dispatch: {}   # allow a manual run from the Actions tab
+
+permissions:
+  contents: write          # needed to commit the rebuilt output back
+
+concurrency:
+  group: build-courses
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Build every course app
+        shell: pwsh
+        run: |
+          $courses = Get-ChildItem -Directory apps-src -Filter 'Course*' |
+                     ForEach-Object { ($_.Name -replace '^Course','') }
+          foreach ($c in $courses) {
+            Write-Host "::group::Course $c"
+            pwsh tools/build-course.ps1 -Course $c
+            Write-Host "::endgroup::"
+          }
+
+      - name: Commit rebuilt output (if changed)
+        shell: pwsh
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add courses
+          if (git diff --cached --quiet) {
+            Write-Host "No changes to commit."
+          } else {
+            git commit -m "ci: rebuild course apps [skip ci]"
+            git push
+          }

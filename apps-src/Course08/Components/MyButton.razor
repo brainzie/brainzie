@@ -1,0 +1,44 @@
+@*
+    MyButton — a button built from a plain <div>, not the native <button>.
+
+    The whole point of the lesson: everything the browser would give a <button>
+    for free, we add ourselves, so students understand what a component really is.
+
+      • role="button"        → screen readers announce it as a button
+      • tabindex="0"         → it joins the keyboard tab order
+      • @onclick             → mouse / touch activation
+      • @onkeydown           → Enter and Space activation (keyboard users)
+      • ChildContent         → the caller decides the label
+      • OnClick              → an EventCallback the parent handles
+*@
+
+<div class="my-button"
+     role="button"
+     tabindex="0"
+     @onclick="HandleClick"
+     @onkeydown="HandleKeyDown">
+    @ChildContent
+</div>
+
+@code {
+    // The text (or markup) shown inside the button, supplied by the parent.
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    // Raised when the button is activated by mouse OR keyboard.
+    [Parameter] public EventCallback OnClick { get; set; }
+
+    private async Task HandleClick()
+    {
+        await OnClick.InvokeAsync();
+    }
+
+    private async Task HandleKeyDown(KeyboardEventArgs e)
+    {
+        // A native <button> fires on Enter and Space. Our <div> does not,
+        // so we recreate that behaviour ourselves.
+        if (e.Key == "Enter" || e.Key == " ")
+        {
+            await OnClick.InvokeAsync();
+        }
+    }
+}
