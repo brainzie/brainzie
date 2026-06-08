@@ -1,7 +1,7 @@
 /* /Components/MyButton.razor.rz.scp.css */
 /* Scoped to MyButton.razor — Blazor isolates these styles to this component. */
 
-.my-button[b-noa2kzivl1] {
+.my-button[b-0thl84ksmb] {
     display: inline-block;
     font-family: inherit;
     font-size: 1rem;
@@ -17,18 +17,18 @@
     transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
 }
 
-.my-button:hover[b-noa2kzivl1] {
+.my-button:hover[b-0thl84ksmb] {
     background: #A8155A;
     box-shadow: 0 4px 12px rgba(216, 27, 114, 0.45);
 }
 
-.my-button:active[b-noa2kzivl1] {
+.my-button:active[b-0thl84ksmb] {
     background: #870f48;
     transform: scale(0.97);       /* the little "push" */
     box-shadow: none;
 }
 
-.my-button:focus-visible[b-noa2kzivl1] {
+.my-button:focus-visible[b-0thl84ksmb] {
     /* Shown only for keyboard users — never remove this without a replacement. */
     outline: 3px solid #6D28D9;
     outline-offset: 3px;

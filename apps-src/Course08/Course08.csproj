@@ -9,6 +9,11 @@
          and an extra workload on CI) and gives no benefit for a teaching demo.
          The runtime ships prebuilt; publish stays fast and CI needs no workload. -->
     <WasmBuildNative>false</WasmBuildNative>
+    <!-- Trim the committed output: don't emit .br/.gz copies (GitHub Pages
+         serves plain files with its own gzip and ignores these). Dropping ICU
+         via InvariantGlobalization would force native relinking (emscripten),
+         which we avoid above, so we leave the single default ICU file. -->
+    <CompressionEnabled>false</CompressionEnabled>
   </PropertyGroup>
 
   <ItemGroup>

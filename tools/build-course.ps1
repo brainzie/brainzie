@@ -57,6 +57,10 @@ if (Test-Path $appDir) { Remove-Item -Recurse -Force $appDir }
 New-Item -ItemType Directory -Force -Path $appDir | Out-Null
 Copy-Item -Recurse -Force (Join-Path $publishedWwwroot '*') $appDir
 
+# Trim: drop pre-compressed copies. GitHub Pages serves plain files with its
+# own gzip and never uses these, so they are pure committed-repo bloat.
+Get-ChildItem -Path $appDir -Recurse -Include *.br, *.gz -File | Remove-Item -Force
+
 # .nojekyll inside the app folder too (belt and braces for the _framework dir).
 $nojekyll = Join-Path $appDir '.nojekyll'
 if (-not (Test-Path $nojekyll)) { New-Item -ItemType File -Path $nojekyll | Out-Null }
