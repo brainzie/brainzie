@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<!--
+  BRAINZIE STANDARD LESSON TEMPLATE
+  Used by the `new-lesson` skill. Copy to:
+     courses/<course-slug>/lessons/lesson-<NN>-<topic>/index.html
+  then replace every {{TOKEN}} and fill each step's content.
+
+  This file lives under tools/ so the depth-4 relative paths (../../../../)
+  below are written for the FINAL location, not for this template's location.
+
+  Tokens:
+    {{PAGE_TITLE}}   e.g. Lesson 12 · Loops and Iteration
+    {{META_DESC}}    one-sentence description for SEO/social
+    {{EYEBROW}}      e.g. Course 08 · Blazor · Loops
+    {{COURSE_LABEL}} the course's short name, e.g. Mixed — Beginner & Advanced
+    {{LESSON_NUMBER}} e.g. 12
+    {{LESSON_TITLE}} catchy <h1>, related to the goal
+    {{LESSON_GOAL}}  terse one/two-sentence statement of what students achieve
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{PAGE_TITLE}} — Brainzie</title>
+  <meta name="description" content="{{META_DESC}}" />
+  <link rel="icon" href="../../../../brand/favicon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" sizes="180x180" href="../../../../brand/apple-touch-icon.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../../../assets/brainzie.css" />
+  <link rel="stylesheet" href="../../../../assets/lesson.css" />
+</head>
+<body>
+
+  <header class="nav"><div class="wrap nav-inner">
+    <a class="brand" href="../../../../index.html"><img class="mark" src="../../../../brand/logo-icon.svg" alt="" /><span class="name">Brainzie</span></a>
+    <nav class="nav-links">
+      <a href="../../../../courses.html">Courses</a>
+      <a href="../../index.html">{{COURSE_LABEL}}</a>
+      <a href="../../../../contact.html" class="btn btn-primary nav-cta">Contact</a>
+    </nav>
+  </div></header>
+
+  <div class="pagehead"><div class="wrap">
+    <div class="crumbs"><a href="../../../../courses.html">Courses</a> / <a href="../../index.html">{{COURSE_LABEL}}</a> / Lesson {{LESSON_NUMBER}}</div>
+    <p class="eyebrow">{{EYEBROW}}</p>
+    <h1>{{LESSON_TITLE}}</h1>
+    <p class="lead">{{LESSON_GOAL}}</p>
+  </div></div>
+
+  <section style="padding: 40px 0 70px;">
+  <div class="lesson">
+
+    <div class="lesson-progress">
+      <span class="label">Step <span id="cur">1</span> of <span id="total">7</span></span>
+      <div class="dots" id="dots"></div>
+    </div>
+
+    <div id="steps">
+
+      <!-- ============ STEP 1 · GOAL ============ -->
+      <section class="step active">
+        <p class="step-kicker">Today's goal</p>
+        <h2>{{LESSON_TITLE}}</h2>
+        <div class="goal-box">
+          <p style="margin:0">{{LESSON_GOAL}}</p>
+        </div>
+        <p>By the end you will be able to:</p>
+        <ul>
+          <!-- FILL: 2–4 concrete success criteria -->
+          <li>…</li>
+          <li>…</li>
+        </ul>
+      </section>
+
+      <!-- ============ STEP 2 · HOMEWORK REVIEW ============ -->
+      <section class="step">
+        <p class="step-kicker">Homework review</p>
+        <h2>How did the homework go?</h2>
+        <p>Quick show of hands — who managed each of these? Then it's your chance to ask anything that tripped you up.</p>
+        <ul class="checklist">
+          <!-- FILL: the homework items set last lesson -->
+          <li>Who completed …?</li>
+          <li>Who tried …?</li>
+          <li>Who got stuck on …?</li>
+        </ul>
+        <div class="note"><strong>Questions?</strong> Now is the time — what was confusing or surprising?</div>
+      </section>
+
+      <!-- ============ STEP 3 · RECAP ============ -->
+      <section class="step">
+        <p class="step-kicker">Recap</p>
+        <h2>Fast-fire: what do we remember?</h2>
+        <p>Shout out the answers — quick questions on things we've covered before.</p>
+        <ul class="checklist qs">
+          <!-- FILL: 3–6 quick recall questions from earlier lessons -->
+          <li>What is …?</li>
+          <li>Why do we …?</li>
+          <li>What's the difference between … and …?</li>
+        </ul>
+      </section>
+
+      <!-- ============ STEP 4 · FAST-FIRE GROUP EXERCISE ============ -->
+      <section class="step">
+        <p class="step-kicker">Fast-fire · together</p>
+        <h2>Spot the error</h2>
+        <p>Look at the code below and shout out what's wrong. (Swap the heading to <em>“What does it do?”</em> for a read-the-code round instead.)</p>
+        <div class="fastfire">
+          <span class="tag">Spot the error</span>
+          <div class="code">
+            <div class="code-bar"><span class="file">Example.razor</span><button class="copy">Copy</button></div>
+            <pre><code>&lt;!-- FILL: code with a deliberate mistake (use &amp;lt; &amp;gt; for angle brackets) --&gt;</code></pre>
+          </div>
+        </div>
+        <div class="note"><strong>Answer:</strong> <!-- FILL: what was wrong / what it does --></div>
+      </section>
+
+      <!-- ============ STEP 5 · MAIN CONTENT ============ -->
+      <!-- Duplicate this <section class="step"> block for as many content steps as needed. -->
+      <section class="step">
+        <p class="step-kicker">Main content</p>
+        <h2><!-- FILL: section heading --></h2>
+        <p><!-- FILL: explanation. Keep paragraphs short; one idea each. --></p>
+        <div class="code">
+          <div class="code-bar"><span class="file">Example.razor</span><button class="copy">Copy</button></div>
+          <pre><code>&lt;!-- FILL: the code being taught --&gt;</code></pre>
+        </div>
+        <!-- OPTIONAL live Blazor demo (see the new-lesson skill for wiring):
+        <div class="tryit">
+          <div class="tryit-bar">▶ Live — try it</div>
+          <iframe src="../../app/#/<NN>/lesson-<NN>-<topic>/demo" style="height: 200px;" title="Live demo" loading="lazy"></iframe>
+        </div>
+        -->
+      </section>
+
+      <!-- ============ STEP 6 · EXERCISES ============ -->
+      <section class="step">
+        <p class="step-kicker">Your turn</p>
+        <h2>Exercises — pick your level</h2>
+        <p>Choose the ones that stretch you. Start where you're comfortable and climb as far as you can.</p>
+        <ul class="exercises">
+          <li><span class="diff easy">Easy</span><h4><!-- FILL --></h4><p><!-- FILL --></p></li>
+          <li><span class="diff medium">Medium</span><h4><!-- FILL --></h4><p><!-- FILL --></p></li>
+          <li><span class="diff hard">Hard</span><h4><!-- FILL --></h4><p><!-- FILL --></p></li>
+        </ul>
+      </section>
+
+      <!-- ============ STEP 7 · HOMEWORK ============ -->
+      <section class="step">
+        <p class="step-kicker">Homework</p>
+        <h2>Before next time</h2>
+        <p>Finish these at home — we'll review them at the start of the next lesson.</p>
+        <ul class="exercises">
+          <!-- FILL: usually some of the exercises above, plus 0–2 extras -->
+          <li><span class="diff medium">Core</span><h4><!-- FILL --></h4><p><!-- FILL --></p></li>
+          <li><span class="diff hard">Stretch</span><h4><!-- FILL --></h4><p><!-- FILL --></p></li>
+        </ul>
+      </section>
+
+    </div>
+
+    <div class="lesson-nav">
+      <button id="prevBtn">← Previous</button>
+      <button id="nextBtn">Next →</button>
+    </div>
+
+  </div>
+  </section>
+
+  <footer><div class="wrap foot-grid">
+    <div>
+      <div class="foot-brand"><img class="mark" src="../../../../brand/logo-icon.svg" alt="" style="width:34px;height:34px" /><span class="name">Brainzie</span></div>
+      <p style="color:#9b93b3;max-width:34ch;margin-top:12px;font-size:.92rem">Nurturing brains, helping everyone, always improving.</p>
+    </div>
+    <div class="foot-col"><h5>Learn</h5><a href="../../../../courses.html">Courses</a><a href="../../index.html">{{COURSE_LABEL}}</a></div>
+    <div class="foot-col"><h5>Company</h5><a href="../../../../contact.html">Contact</a></div>
+    <p class="foot-note">© 2026 Brainzie Ltd · Delivered with Townley Grammar School.</p>
+  </div></footer>
+
+  <!-- Page mechanics only (stepper + copy). Not part of the lesson content. -->
+  <script>
+    const steps = Array.from(document.querySelectorAll('.step'));
+    const total = steps.length;
+    const curEl = document.getElementById('cur');
+    const dotsEl = document.getElementById('dots');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    document.getElementById('total').textContent = total;
+
+    let i = 0;
+    steps.forEach((_, n) => {
+      const d = document.createElement('button');
+      d.className = 'dot';
+      d.title = 'Step ' + (n + 1);
+      d.addEventListener('click', () => go(n));
+      dotsEl.appendChild(d);
+    });
+    const dots = Array.from(dotsEl.children);
+
+    function go(n) {
+      i = Math.max(0, Math.min(total - 1, n));
+      steps.forEach((s, n2) => s.classList.toggle('active', n2 === i));
+      dots.forEach((d, n2) => {
+        d.classList.toggle('current', n2 === i);
+        d.classList.toggle('done', n2 < i);
+      });
+      curEl.textContent = i + 1;
+      prevBtn.disabled = i === 0;
+      nextBtn.textContent = i === total - 1 ? 'Finish ✓' : 'Next →';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    prevBtn.addEventListener('click', () => go(i - 1));
+    nextBtn.addEventListener('click', () => { if (i < total - 1) go(i + 1); });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight') go(i + 1);
+      if (e.key === 'ArrowLeft') go(i - 1);
+    });
+
+    document.querySelectorAll('.copy').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const text = btn.closest('.code').querySelector('code').innerText;
+        navigator.clipboard.writeText(text).then(() => {
+          btn.textContent = 'Copied!';
+          btn.classList.add('copied');
+          setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1600);
+        });
+      });
+    });
+
+    go(0);
+  </script>
+</body>
+</html>
