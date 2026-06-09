@@ -52,8 +52,8 @@
 .goal-box { background: var(--brand-tint); border-radius: var(--radius-s); padding: 18px 22px; margin: 16px 0; }
 .goal-box strong { color: var(--brand-deep); }
 .checklist { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 10px; }
-.checklist li { display: grid; grid-template-columns: 26px 1fr; gap: 12px; align-items: start; }
-.checklist li::before { content: "✋"; }
+.checklist li { position: relative; padding-left: 32px; line-height: 1.65; }
+.checklist li::before { content: "✋"; position: absolute; left: 0; top: 0; line-height: inherit; }
 .checklist.qs li::before { content: "❓"; }
 
 /* fast-fire group exercise — "Spot the error" / "What does it do?" */
