@@ -69,11 +69,38 @@
 .diff.medium { color: #B26A00; background: #FFF1E0; }
 .diff.hard { color: var(--brand-deep); background: var(--brand-tint); }
 
-/* nav buttons */
+/* nav buttons — rendered both above and below the step (see assets/lesson.js) */
 .lesson-nav { display: flex; justify-content: space-between; gap: 14px; margin: 34px 0 10px; border-top: 1px solid var(--line); padding-top: 22px; }
+.lesson-nav.top { margin: 6px 0 22px; border-top: 0; padding-top: 0; }
 .lesson-nav button { font-family: var(--font-display); font-weight: 600; font-size: 1rem; padding: 12px 26px; border-radius: 999px; cursor: pointer; border: 1.6px solid transparent; transition: transform .15s, background .15s, color .15s, border-color .15s; }
-#prevBtn { background: transparent; color: var(--ink); border-color: var(--line); }
-#prevBtn:hover:not(:disabled) { border-color: var(--brand); color: var(--brand-deep); transform: translateY(-2px); }
-#nextBtn { background: var(--brand); color: #fff; box-shadow: var(--shadow-s); }
-#nextBtn:hover:not(:disabled) { background: var(--brand-deep); transform: translateY(-2px); }
+.lesson-nav .prev { background: transparent; color: var(--ink); border-color: var(--line); }
+.lesson-nav .prev:hover:not(:disabled) { border-color: var(--brand); color: var(--brand-deep); transform: translateY(-2px); }
+.lesson-nav .next { background: var(--brand); color: #fff; box-shadow: var(--shadow-s); }
+.lesson-nav .next:hover:not(:disabled) { background: var(--brand-deep); transform: translateY(-2px); }
 .lesson-nav button:disabled { opacity: .4; cursor: default; }
+
+/* ---- Full-screen toggle (glowing, à la team.core DataGrid) -------------- */
+.fs-btn { margin-left: auto; display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: var(--radius-s); border: 1px solid var(--line); background: var(--white); color: var(--ink); font-size: 1.05rem; line-height: 1; cursor: pointer; transition: border-color .15s, color .15s, background .15s; }
+.fs-btn:hover { border-color: var(--brand); color: var(--brand-deep); }
+.fs-btn:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+/* Glow to invite use until the student has tried full screen once (JS clears it). */
+.fs-btn.glow { animation: fs-glow 2s ease-in-out infinite; border-color: var(--brand); color: var(--brand-deep); }
+.fs-btn.glow:hover { animation: none; }
+@keyframes fs-glow {
+  0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--brand) 75%, transparent); background: var(--white); transform: scale(1); }
+  50%      { box-shadow: 0 0 0 9px color-mix(in srgb, var(--brand) 0%, transparent); background: color-mix(in srgb, var(--brand) 16%, var(--white)); transform: scale(1.08); }
+}
+@media (prefers-reduced-motion: reduce) { .fs-btn.glow { animation: none !important; } }
+
+/* lesson title shown in the progress bar only when full screen (the page header is hidden) */
+.lesson-progress .fs-title { display: none; font-family: var(--font-display); font-weight: 700; color: var(--ink); }
+
+/* ---- Full-screen layout: only the current step (and a slim bar) show ----- */
+body.lesson-fullscreen { overflow: hidden; }
+body.lesson-fullscreen header.nav,
+body.lesson-fullscreen .pagehead,
+body.lesson-fullscreen > footer { display: none; }
+body.lesson-fullscreen .lesson-shell { position: fixed; inset: 0; z-index: 200; overflow-y: auto; background: var(--paper); padding: 0; }
+body.lesson-fullscreen .lesson { padding: 0 8px 40px; }
+body.lesson-fullscreen .lesson-progress { position: sticky; top: 0; z-index: 5; margin: 0 0 18px; padding: 12px 8px; background: color-mix(in srgb, var(--paper) 92%, transparent); backdrop-filter: blur(6px); border-bottom: 1px solid var(--line); }
+body.lesson-fullscreen .lesson-progress .fs-title { display: inline; }

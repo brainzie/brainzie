@@ -31,16 +31,18 @@
     <p class="lead">We build a real, reusable Blazor component — <code>MyButton</code> — starting from a plain <code>&lt;div&gt;</code>. One layer at a time, you'll see exactly what a native button gives you for free, and how to recreate it yourself in C# and CSS.</p>
   </div></div>
 
-  <section style="padding: 40px 0 70px;">
+  <section class="lesson-shell" style="padding: 40px 0 70px;">
   <div class="lesson">
 
     <div class="note">
-      <strong>Follow along in Visual Studio.</strong> In your Blazor project, add a new <em>Razor Component</em> called <code>MyButton.razor</code>. Each step below shows the code to add — use the <em>Copy</em> button if you get stuck. The last two steps run live, right here in the page.
+      <strong>Follow along in Visual Studio.</strong> Each step shows exactly which file to create or open and what to type — use the <em>Copy</em> button if you get stuck. Tip: click the <strong>⛶</strong> button to go full screen and show just the current step. The last two steps run live, right here in the page.
     </div>
 
     <div class="lesson-progress">
       <span class="label">Step <span id="cur">1</span> of <span id="total">8</span></span>
+      <span class="fs-title"></span>
       <div class="dots" id="dots"></div>
+      <button class="fs-btn" type="button">⛶</button>
     </div>
 
     <div id="steps">
@@ -249,8 +251,8 @@
     </div>
 
     <div class="lesson-nav">
-      <button id="prevBtn">← Previous</button>
-      <button id="nextBtn">Next →</button>
+      <button class="prev">← Previous</button>
+      <button class="next">Next →</button>
     </div>
 
   </div>
@@ -266,58 +268,7 @@
     <p class="foot-note">© 2026 Brainzie Ltd · Delivered with Townley Grammar School.</p>
   </div></footer>
 
-  <!-- Page mechanics only (stepper + copy). Not part of the lesson. -->
-  <script>
-    const steps = Array.from(document.querySelectorAll('.step'));
-    const total = steps.length;
-    const curEl = document.getElementById('cur');
-    const dotsEl = document.getElementById('dots');
-    const prevBtn = document.getElementById('prevBtn');
-    const nextBtn = document.getElementById('nextBtn');
-    document.getElementById('total').textContent = total;
-
-    let i = 0;
-    steps.forEach((_, n) => {
-      const d = document.createElement('button');
-      d.className = 'dot';
-      d.title = 'Step ' + (n + 1);
-      d.addEventListener('click', () => go(n));
-      dotsEl.appendChild(d);
-    });
-    const dots = Array.from(dotsEl.children);
-
-    function go(n) {
-      i = Math.max(0, Math.min(total - 1, n));
-      steps.forEach((s, n2) => s.classList.toggle('active', n2 === i));
-      dots.forEach((d, n2) => {
-        d.classList.toggle('current', n2 === i);
-        d.classList.toggle('done', n2 < i);
-      });
-      curEl.textContent = i + 1;
-      prevBtn.disabled = i === 0;
-      nextBtn.textContent = i === total - 1 ? 'Finish ✓' : 'Next →';
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
-    prevBtn.addEventListener('click', () => go(i - 1));
-    nextBtn.addEventListener('click', () => { if (i < total - 1) go(i + 1); });
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'ArrowRight') go(i + 1);
-      if (e.key === 'ArrowLeft') go(i - 1);
-    });
-
-    document.querySelectorAll('.copy').forEach((btn) => {
-      btn.addEventListener('click', () => {
-        const text = btn.closest('.code').querySelector('code').innerText;
-        navigator.clipboard.writeText(text).then(() => {
-          btn.textContent = 'Copied!';
-          btn.classList.add('copied');
-          setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1600);
-        });
-      });
-    });
-
-    go(0);
-  </script>
+  <!-- Stepper, full-screen, history and Copy buttons — shared, page mechanics only. -->
+  <script src="../../../../assets/lesson.js"></script>
 </body>
 </html>

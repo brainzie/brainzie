@@ -35,6 +35,8 @@ A course's **first** lesson is typically an intro and may deviate; ask the user 
 2. **Pick the lesson number and folder.** Lessons are numbered by their position in the course. Folder: `courses/<course-slug>/lessons/lesson-<NN>-<topic>/index.html` (NN zero-padded, topic kebab-case). If renumbering an existing lesson, rename the folder, its routes/fragments, and any component names together (see "Renumbering" below).
 
 3. **Create the page from the template.** Copy `tools/templates/lesson.html` to the new folder as `index.html`. Replace every `{{TOKEN}}` (PAGE_TITLE, META_DESC, EYEBROW, COURSE_LABEL, LESSON_NUMBER, LESSON_TITLE, LESSON_GOAL) and fill each step's `<!-- FILL -->` content. Duplicate the Main content `<section class="step">` for as many content steps as needed — the stepper counts steps automatically. Escape `<` `>` `&` as `&lt; &gt; &amp;` inside `<pre><code>`.
+   - The stepper, full-screen toggle (glowing ⛶ button), top-and-bottom Previous/Next, browser-history step navigation, and Copy buttons are all provided by `assets/lesson.js` (linked at the foot of the template). Don't re-implement them; just keep the markup contract (`.lesson-progress` with `.fs-title`+`.fs-btn`, `#steps` of `.step`, a bottom `.lesson-nav` with `.prev`/`.next`, and `class="lesson-shell"` on the wrapping `<section>`).
+   - **Be explicit about every action.** Students do not infer steps. Whenever code is introduced, state plainly which file to **create** or **open**, where it lives, and what to type — e.g. "Add a new Razor Component named `MyButton.razor`" or "create the scoped stylesheet `MyButton.razor.css` next to it". Label code-block headers with intent ("`MyButton.razor` — create this file"). Never leave file creation implied.
 
 4. **Add a live demo/exercise ONLY if the lesson needs real interactivity** (otherwise keep it pure HTML — see the "Blazor only where required" rule). To add one:
    - In `apps-src/Course<NN>/`, add a component under `Demos/Lesson<NN><Topic>/` or `Exercises/Lesson<NN><Topic>/`, named uniquely (e.g. `Lesson12LoopsDemo.razor`).
@@ -56,6 +58,7 @@ Move the lesson folder, and update **together**: the fragment routes in the less
 
 ## Guardrails
 - Pure HTML for narrative; Blazor only for genuinely interactive demos.
-- No JavaScript shown as lesson content.
+- No JavaScript shown as lesson content (the stepper's own `assets/lesson.js` is page mechanics, not taught).
+- Spell out file creation/opening explicitly in every step that introduces code — never leave it implied.
 - Match the brainzie design system (use existing classes from `assets/brainzie.css` and `assets/lesson.css`; don't invent new colours).
 - To add a brand-new course instead, use the `new-course` skill first.

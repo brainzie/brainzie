@@ -49,12 +49,14 @@
     <p class="lead">{{LESSON_GOAL}}</p>
   </div></div>
 
-  <section style="padding: 40px 0 70px;">
+  <section class="lesson-shell" style="padding: 40px 0 70px;">
   <div class="lesson">
 
     <div class="lesson-progress">
       <span class="label">Step <span id="cur">1</span> of <span id="total">7</span></span>
+      <span class="fs-title"></span>
       <div class="dots" id="dots"></div>
+      <button class="fs-btn" type="button">⛶</button>
     </div>
 
     <div id="steps">
@@ -122,8 +124,12 @@
         <p class="step-kicker">Main content</p>
         <h2><!-- FILL: section heading --></h2>
         <p><!-- FILL: explanation. Keep paragraphs short; one idea each. --></p>
+        <!-- BE EXPLICIT about every action: which file to CREATE or OPEN, where it
+             goes, and what to type. Students don't infer steps — spell them out.
+             e.g.: -->
+        <div class="note"><strong>Do this:</strong> In Visual Studio, right-click the project → <em>Add → Razor Component</em>, name it <code>Example.razor</code>, then replace its contents with the code below.</div>
         <div class="code">
-          <div class="code-bar"><span class="file">Example.razor</span><button class="copy">Copy</button></div>
+          <div class="code-bar"><span class="file">Example.razor — create this file</span><button class="copy">Copy</button></div>
           <pre><code>&lt;!-- FILL: the code being taught --&gt;</code></pre>
         </div>
         <!-- OPTIONAL live Blazor demo (see the new-lesson skill for wiring):
@@ -161,8 +167,8 @@
     </div>
 
     <div class="lesson-nav">
-      <button id="prevBtn">← Previous</button>
-      <button id="nextBtn">Next →</button>
+      <button class="prev">← Previous</button>
+      <button class="next">Next →</button>
     </div>
 
   </div>
@@ -178,58 +184,7 @@
     <p class="foot-note">© 2026 Brainzie Ltd · Delivered with Townley Grammar School.</p>
   </div></footer>
 
-  <!-- Page mechanics only (stepper + copy). Not part of the lesson content. -->
-  <script>
-    const steps = Array.from(document.querySelectorAll('.step'));
-    const total = steps.length;
-    const curEl = document.getElementById('cur');
-    const dotsEl = document.getElementById('dots');
-    const prevBtn = document.getElementById('prevBtn');
-    const nextBtn = document.getElementById('nextBtn');
-    document.getElementById('total').textContent = total;
-
-    let i = 0;
-    steps.forEach((_, n) => {
-      const d = document.createElement('button');
-      d.className = 'dot';
-      d.title = 'Step ' + (n + 1);
-      d.addEventListener('click', () => go(n));
-      dotsEl.appendChild(d);
-    });
-    const dots = Array.from(dotsEl.children);
-
-    function go(n) {
-      i = Math.max(0, Math.min(total - 1, n));
-      steps.forEach((s, n2) => s.classList.toggle('active', n2 === i));
-      dots.forEach((d, n2) => {
-        d.classList.toggle('current', n2 === i);
-        d.classList.toggle('done', n2 < i);
-      });
-      curEl.textContent = i + 1;
-      prevBtn.disabled = i === 0;
-      nextBtn.textContent = i === total - 1 ? 'Finish ✓' : 'Next →';
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
-    prevBtn.addEventListener('click', () => go(i - 1));
-    nextBtn.addEventListener('click', () => { if (i < total - 1) go(i + 1); });
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'ArrowRight') go(i + 1);
-      if (e.key === 'ArrowLeft') go(i - 1);
-    });
-
-    document.querySelectorAll('.copy').forEach((btn) => {
-      btn.addEventListener('click', () => {
-        const text = btn.closest('.code').querySelector('code').innerText;
-        navigator.clipboard.writeText(text).then(() => {
-          btn.textContent = 'Copied!';
-          btn.classList.add('copied');
-          setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1600);
-        });
-      });
-    });
-
-    go(0);
-  </script>
+  <!-- Stepper, full-screen, history and Copy buttons — shared, page mechanics only. -->
+  <script src="../../../../assets/lesson.js"></script>
 </body>
 </html>
