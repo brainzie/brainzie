@@ -51,8 +51,9 @@
 /* "Today's goal" success-criteria list, homework-review checklist, recap list */
 .goal-box { background: var(--brand-tint); border-radius: var(--radius-s); padding: 18px 22px; margin: 16px 0; }
 .goal-box strong { color: var(--brand-deep); }
-.checklist { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 10px; }
+.checklist { list-style: none; margin: 8px 0 0; padding: 0; }
 .checklist li { position: relative; padding-left: 32px; line-height: 1.65; }
+.checklist li + li { margin-top: 10px; }
 .checklist li::before { content: "✋"; position: absolute; left: 0; top: 0; line-height: inherit; }
 .checklist.qs li::before { content: "❓"; }
 
@@ -61,8 +62,9 @@
 .fastfire .tag { display: inline-block; font-family: var(--font-display); font-weight: 700; font-size: .72rem; letter-spacing: .12em; text-transform: uppercase; color: #fff; background: var(--brand); padding: 4px 12px; border-radius: 0 0 8px 8px; }
 
 /* exercise list, ordered by increasing difficulty */
-.exercises { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 12px; }
+.exercises { list-style: none; margin: 8px 0 0; padding: 0; }
 .exercises li { background: var(--white); border: 1px solid var(--line); border-radius: var(--radius-s); padding: 14px 16px; }
+.exercises li + li { margin-top: 12px; }
 .exercises h4 { font-size: 1.02rem; margin-bottom: 4px; }
 .diff { display: inline-block; font-family: var(--font-display); font-weight: 700; font-size: .68rem; letter-spacing: .1em; text-transform: uppercase; padding: 3px 10px; border-radius: 999px; margin-bottom: 6px; }
 .diff.easy { color: #137A43; background: #E3F9EC; }
