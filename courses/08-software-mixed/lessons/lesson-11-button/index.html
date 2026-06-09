@@ -39,7 +39,7 @@
     </div>
 
     <div class="lesson-progress">
-      <span class="label">Step <span id="cur">1</span> of <span id="total">8</span></span>
+      <span class="label">Step <span id="cur">1</span> of <span id="total">14</span></span>
       <span class="fs-title"></span>
       <div class="dots" id="dots"></div>
       <button class="fs-btn" type="button">⛶</button>
@@ -47,11 +47,81 @@
 
     <div id="steps">
 
-      <!-- STEP 1 -->
+      <!-- ============ GOAL ============ -->
       <section class="step active">
-        <p class="step-kicker">Step 1 · The blank canvas</p>
+        <p class="step-kicker">Today's goal</p>
+        <h2>Build a Button Component</h2>
+        <div class="goal-box">
+          <p style="margin:0">Build your own reusable Blazor <code>MyButton</code> component from a plain <code>&lt;div&gt;</code> — and understand everything a real button does for you under the hood.</p>
+        </div>
+        <p>By the end you'll be able to:</p>
+        <ul>
+          <li>Create a Blazor component with its own markup and scoped CSS.</li>
+          <li>Make an element look and feel clickable, and react to hover, press and keyboard focus.</li>
+          <li>Handle clicks and key presses in C# with <code>@onclick</code> and <code>@onkeydown</code>.</li>
+          <li>Expose <code>[Parameter]</code>s so other pages can reuse your button.</li>
+        </ul>
+      </section>
+
+      <!-- ============ HOMEWORK REVIEW ============ -->
+      <section class="step">
+        <p class="step-kicker">Homework review</p>
+        <h2>How did the homework go?</h2>
+        <p>Quick show of hands — who managed each of these from last time? Then ask about anything that tripped you up.</p>
+        <ul class="checklist">
+          <li>Who finished the <strong>calculator</strong>?</li>
+          <li>Who built the <strong>“are you on holidays?”</strong> if/else page?</li>
+          <li><em>(Advanced)</em> Who attempted the <strong>SVG diagram</strong> / organism-classification challenge?</li>
+        </ul>
+        <div class="note"><strong>Questions?</strong> Now's the time — what was confusing or surprising?</div>
+      </section>
+
+      <!-- ============ RECAP ============ -->
+      <section class="step">
+        <p class="step-kicker">Recap</p>
+        <h2>Fast-fire: what do we remember?</h2>
+        <p>Shout out the answers — quick questions on things we've already covered.</p>
+        <ul class="checklist qs">
+          <li>What is Blazor?</li>
+          <li>What's the difference between a <em>page</em> and a <em>component</em>?</li>
+          <li>What does an event handler do? Name an event we've used.</li>
+          <li>One-way vs two-way binding — what's the difference?</li>
+          <li>What does an <code>if</code> / <code>else</code> statement let our code do?</li>
+        </ul>
+      </section>
+
+      <!-- ============ FAST-FIRE GROUP EXERCISE ============ -->
+      <section class="step">
+        <p class="step-kicker">Fast-fire · together</p>
+        <h2>Spot the error</h2>
+        <p>Look at this Blazor snippet and shout out what's wrong — there's more than one bug.</p>
+        <div class="fastfire">
+          <span class="tag">Spot the error</span>
+          <div class="code">
+            <div class="code-bar"><span class="file">Counter.razor</span><button class="copy">Copy</button></div>
+            <pre><code>&lt;p&gt;Count: @count&lt;/p&gt;
+&lt;button onclick="Increment"&gt;Add one&lt;/button&gt;
+
+@code {
+    int count = 0;
+
+    void Increment()
+    {
+        count++
+    }
+}</code></pre>
+          </div>
+        </div>
+        <div class="note"><strong>Answers:</strong> the click handler must be Blazor's directive <code>@onclick="Increment"</code> (not HTML's <code>onclick</code>), and <code>count++</code> is missing its semicolon — <code>count++;</code>.</div>
+      </section>
+
+      <!-- ============ MAIN CONTENT: build the component ============ -->
+      <!-- STEP 1 -->
+      <section class="step">
+        <p class="step-kicker">Build · The blank canvas</p>
         <h2>Start with a div</h2>
         <p>A Blazor component is just a <code>.razor</code> file. The most basic thing we can put in it is a <code>&lt;div&gt;</code> — a plain box with no meaning, no style, and no behaviour. This is our starting point.</p>
+        <div class="note"><strong>Do this:</strong> In Visual Studio, right-click the project → <em>Add → Razor Component</em>, name it <code>MyButton.razor</code>, and replace its contents with the code below.</div>
         <div class="code">
           <div class="code-bar"><span class="file">MyButton.razor</span><button class="copy">Copy</button></div>
           <pre><code>&lt;div&gt;Click me&lt;/div&gt;</code></pre>
@@ -61,7 +131,7 @@
 
       <!-- STEP 2 -->
       <section class="step">
-        <p class="step-kicker">Step 2 · Make it look like a button</p>
+        <p class="step-kicker">Build · Make it look like a button</p>
         <h2>Give it shape with scoped CSS</h2>
         <p>Blazor lets each component carry its own styles in a matching <code>MyButton.razor.css</code> file — these are <strong>scoped</strong>, so they only affect this component. First, give the div a class:</p>
         <div class="code">
@@ -69,8 +139,9 @@
           <pre><code>&lt;div class="my-button"&gt;Click me&lt;/div&gt;</code></pre>
         </div>
         <p>Then style it. <code>padding</code> adds inner space, <code>background</code> gives colour, <code>border-radius</code> rounds the corners, and <code>display: inline-block</code> makes padding behave.</p>
+        <div class="note"><strong>Do this:</strong> create a new file called <code>MyButton.razor.css</code> in the same folder as <code>MyButton.razor</code> (right-click the project → <em>Add → New Item → Style Sheet</em>). Blazor links it to the component automatically by matching the name.</div>
         <div class="code">
-          <div class="code-bar"><span class="file">MyButton.razor.css</span><button class="copy">Copy</button></div>
+          <div class="code-bar"><span class="file">MyButton.razor.css — create this file</span><button class="copy">Copy</button></div>
           <pre><code>.my-button {
     display: inline-block;
     background: #D81B72;
@@ -84,7 +155,7 @@
 
       <!-- STEP 3 -->
       <section class="step">
-        <p class="step-kicker">Step 3 · Make it feel clickable</p>
+        <p class="step-kicker">Build · Make it feel clickable</p>
         <h2>Cursor and selection</h2>
         <p>Two small lines fix the feel. <code>cursor: pointer</code> shows the hand cursor that says "click me", and <code>user-select: none</code> stops the label from being highlighted when you click. Native buttons do both automatically — we add them by hand.</p>
         <div class="code">
@@ -96,7 +167,7 @@
 
       <!-- STEP 4 -->
       <section class="step">
-        <p class="step-kicker">Step 4 · React to the mouse</p>
+        <p class="step-kicker">Build · React to the mouse</p>
         <h2>The hover state</h2>
         <p>A <strong>pseudo-class</strong> is a selector that activates when something happens. <code>:hover</code> fires while the mouse is over the element. We darken the colour, and add <code>transition</code> so the change fades smoothly instead of snapping.</p>
         <div class="code">
@@ -114,7 +185,7 @@
 
       <!-- STEP 5 -->
       <section class="step">
-        <p class="step-kicker">Step 5 · React to the press</p>
+        <p class="step-kicker">Build · React to the press</p>
         <h2>The active state</h2>
         <p><code>:active</code> fires while the mouse button is held down. We darken it further and shrink it slightly with <code>transform: scale(0.97)</code>. That tiny "push" makes the button feel physical and responsive.</p>
         <div class="code">
@@ -134,7 +205,7 @@
 
       <!-- STEP 6 -->
       <section class="step">
-        <p class="step-kicker">Step 6 · Reach everyone</p>
+        <p class="step-kicker">Build · Reach everyone</p>
         <h2>Keyboard focus</h2>
         <p>Many people navigate with the keyboard alone. <code>tabindex="0"</code> puts our div into the normal tab order, and <code>role="button"</code> tells screen readers to announce it as a button rather than a plain box.</p>
         <div class="code">
@@ -161,7 +232,7 @@
 
       <!-- STEP 7 -->
       <section class="step">
-        <p class="step-kicker">Step 7 · Make it do something</p>
+        <p class="step-kicker">Build · Make it do something</p>
         <h2>Handle clicks and keys in C#</h2>
         <p>Now the Blazor part. We wire <code>@onclick</code> for mouse and touch, and <code>@onkeydown</code> for the keyboard. A native button activates on <strong>Enter</strong> and <strong>Space</strong> — our div doesn't know to, so we tell it, in C#:</p>
         <div class="code">
@@ -191,7 +262,7 @@
 
       <!-- STEP 8 -->
       <section class="step">
-        <p class="step-kicker">Step 8 · Turn it into a real component</p>
+        <p class="step-kicker">Build · Turn it into a real component</p>
         <h2>Parameters: the reusable button</h2>
         <p>A component is only useful if other parts of the app can reuse it. We add two <strong>parameters</strong>: <code>ChildContent</code> lets the caller choose the label, and <code>OnClick</code> is an <code>EventCallback</code> the parent handles — exactly like the built-in button.</p>
         <div class="code">
@@ -244,8 +315,35 @@
         </div>
 
         <div class="note" style="margin-top:24px;">
-          <strong>Why build all this?</strong> A native <code>&lt;button&gt;</code> gives you steps 3–7 for free. Recreating them teaches you what the browser actually does — and what every Blazor component you ever write is made of: markup, scoped style, parameters, and event callbacks.
+          <strong>Why build all this?</strong> A native <code>&lt;button&gt;</code> gives you all of this for free. Recreating it teaches you what the browser actually does — and what every Blazor component you ever write is made of: markup, scoped style, parameters, and event callbacks.
         </div>
+      </section>
+
+      <!-- ============ EXERCISES ============ -->
+      <section class="step">
+        <p class="step-kicker">Your turn</p>
+        <h2>Exercises — pick your level</h2>
+        <p>Use your new <code>MyButton</code> component. Start where you're comfortable and climb as far as you can.</p>
+        <ul class="exercises">
+          <li><span class="diff easy">Easy</span><h4>Change the look</h4><p>Edit <code>MyButton.razor.css</code> to give your button a new colour, rounder corners, or a bigger size.</p></li>
+          <li><span class="diff easy">Easy</span><h4>Use it twice</h4><p>Put two <code>&lt;MyButton&gt;</code>s on a page with different labels, each showing a different message when clicked.</p></li>
+          <li><span class="diff medium">Medium</span><h4>Click counter</h4><p>Make a page where a <code>MyButton</code> increases a number on screen each time it's clicked.</p></li>
+          <li><span class="diff medium">Medium</span><h4>Disabled state</h4><p>Add a <code>Disabled</code> parameter to <code>MyButton</code> that greys it out and ignores clicks.</p></li>
+          <li><span class="diff hard">Hard</span><h4>Icon + label</h4><p>Let the caller show an emoji or icon before the text (via <code>ChildContent</code> or a new parameter).</p></li>
+          <li><span class="diff hard">Hard</span><h4>Toggle button</h4><p>Make a <code>MyButton</code> that switches between two states (e.g. “Follow” / “Following”) each press.</p></li>
+        </ul>
+      </section>
+
+      <!-- ============ HOMEWORK ============ -->
+      <section class="step">
+        <p class="step-kicker">Homework</p>
+        <h2>Before next time</h2>
+        <p>Finish these at home — we'll review them at the start of the next lesson.</p>
+        <ul class="exercises">
+          <li><span class="diff medium">Core</span><h4>Click counter</h4><p>Complete the click-counter exercise above using your <code>MyButton</code>.</p></li>
+          <li><span class="diff medium">Core</span><h4>Disabled state</h4><p>Add and test the <code>Disabled</code> parameter.</p></li>
+          <li><span class="diff hard">Stretch</span><h4>Toggle button</h4><p>Build the “Follow / Following” toggle button.</p></li>
+        </ul>
       </section>
 
     </div>
