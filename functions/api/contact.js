@@ -6,20 +6,23 @@
 //      TURNSTILE_SECRET is configured).
 //   2. Stores a durable backup of every submission in the LEADS KV namespace,
 //      so a message is never lost even if email delivery hiccups.
-//   3. Emails the submission via the Zoho Mail API, sending from the
-//      hello@brainzie.co.uk mailbox itself — so SPF/DKIM/DMARC are inherently
-//      correct and NO DNS changes are needed. The OAuth refresh token is a
-//      Zoho "Self Client" grant minted BY hello@ with only the
-//      ZohoMail.messages.CREATE (+ accounts.READ) scopes, so it can only ever
-//      act as that one mailbox — the Zoho analogue of emsurge's Exchange
-//      application access policy, enforced by construction.
+//   3. Emails the submission via the Zoho Mail API. hello@brainzie.co.uk is a
+//      GROUP (it cannot sign in or own OAuth grants); the only user is
+//      directors@brainzie.co.uk, so mail is sent FROM directors@ TO hello@
+//      (the group receives fine). Sending from the real mailbox keeps
+//      SPF/DKIM/DMARC inherently correct — NO DNS changes needed. The OAuth
+//      refresh token is a Zoho "Self Client" grant minted BY directors@ with
+//      only the ZohoMail.messages.CREATE (+ accounts.READ) scopes, so it can
+//      only ever act as that one mailbox — the Zoho analogue of emsurge's
+//      Exchange application access policy, enforced by construction.
 //
 // The form posts a flat JSON object. Two reserved keys:
 //   formType               -> labels the email subject + KV key (default "Contact")
 //   cf-turnstile-response  -> the Turnstile token
 // Every other key is treated as a form field and included in the email.
 //
-// Bindings / vars / secrets (see SETUP.md / wrangler.toml / setup-zoho-mailer.ps1):
+// Bindings / vars / secrets (see SETUP.md / wrangler.toml; configured by the
+// BrainzieLanding PowerShell module — Initialize-BrainzieZohoMailer):
 //   LEADS               KV namespace                  (backup + Zoho token cache)
 //   TURNSTILE_SECRET    secret                        (skipped if unset)
 //   ZOHO_CLIENT_ID      var                           (Self Client id)
@@ -28,8 +31,8 @@
 //   ZOHO_ACCOUNTS_BASE  var, e.g. https://accounts.zoho.com (.eu/.in per DC)
 //   ZOHO_MAIL_BASE      var, e.g. https://mail.zoho.com
 //   ZOHO_ACCOUNT_ID     var, optional                 (auto-discovered if empty)
-//   CONTACT_TO          e.g. "hello@brainzie.co.uk"   (recipient)
-//   CONTACT_FROM        e.g. "hello@brainzie.co.uk"   (the mailbox the app sends as)
+//   CONTACT_TO          "hello@brainzie.co.uk"        (recipient — the group)
+//   CONTACT_FROM        "directors@brainzie.co.uk"    (the USER mailbox the app sends as)
 
 const json = (obj, status = 200) =>
   new Response(JSON.stringify(obj), {

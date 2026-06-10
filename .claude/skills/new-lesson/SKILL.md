@@ -44,14 +44,14 @@ A course's **first** lesson is typically an intro and may deviate; ask the user 
    - Register its namespace in `apps-src/Course<NN>/_Imports.razor`, add a `case "<NN>/lesson-<NN>-<topic>/demo":` (and/or `/exercise`) to `apps-src/Course<NN>/App.razor`, and a link in `Pages/Catalog.razor`.
    - Embed in the lesson with the `.tryit` block (already stubbed, commented, in the template):
      `<iframe src="../../app/#/<NN>/lesson-<NN>-<topic>/demo" ...>`. The `../../app/` path and `#fragment` routing are required — see the lessons-platform conventions in the project memory and `apps-src/Course<NN>/App.razor` for why.
-   - Rebuild: `pwsh tools/build-course.ps1 -Course <NN>` (publishes to `site/courses/<slug>/app`).
+   - Rebuild: `Import-Module ./scripts/BrainzieLanding/BrainzieLanding.psd1; Build-BrainzieCourseApp -Course <NN>` (publishes to `site/courses/<slug>/app`).
 
 5. **Link the lesson from the course summary.** In `site/courses/<course-slug>/index.html`, add a row to the "Interactive lessons" `<ol class="sessions">` (create that section if missing — see Course 08 for the pattern):
    `<li><span class="s-n"><NN></span><div><h4><a href="lessons/lesson-<NN>-<topic>/index.html">Title</a></h4><p>One-line summary.</p></div></li>`
 
 6. **Verify locally.** Serve the site over HTTP (`python -m http.server 8123 --directory F:\src\brainzie\site`, or `npx wrangler pages dev` from the repo root for the contact Function too) and open the lesson. Check: stepper Next/Previous works, code Copy buttons work, any iframes boot the Blazor app, and there are no broken links. Use the preview tools if available.
 
-7. **Commit, push & publish.** Stage the lesson, the course index, and any `apps-src/**` + `site/courses/<slug>/app/**` changes; commit and push to `main`. **Pushing does not publish** — the site is on Cloudflare Pages: run `./deploy.ps1` from the repo root (needs the brainzie Cloudflare login; see SETUP.md). If you changed `apps-src/**`, the `build-courses` Action also rebuilds and commits the app output — `git pull` afterwards to sync.
+7. **Commit, push & publish.** Stage the lesson, the course index, and any `apps-src/**` + `site/courses/<slug>/app/**` changes; commit and push to `main`. **Pushing does not publish** — the site is on Cloudflare Pages: publish with `Publish-BrainzieLanding` (from the BrainzieLanding module; needs the brainzie Cloudflare login — see SETUP.md). If you changed `apps-src/**`, the `build-courses` Action also rebuilds and commits the app output — `git pull` afterwards to sync.
 
 ## Renumbering an existing lesson
 

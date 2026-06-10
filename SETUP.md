@@ -3,7 +3,9 @@
 The site is a **pure static site** in [`site/`](site/) — hand-written HTML, the
 shared CSS/JS in `site/assets/`, the courses (including the committed Blazor
 WASM apps), and a single Cloudflare Pages Function for the contact form. Same
-model as `emsurge-landingpage`.
+model as `emsurge-landingpage`. All operational tooling lives in the
+**BrainzieLanding PowerShell module** (`scripts/BrainzieLanding`), following the
+same structure as the EOM / BMoney modules.
 
 ```
 functions/   api/contact.js      ← backend for the contact form (root, per wrangler.toml config mode)
@@ -14,25 +16,39 @@ site/                            ← published output (pages_build_output_dir)
   brand/     logos + favicons
   courses/   <slug>/index.html, lessons/…, app/ (committed Blazor WASM output)
 apps-src/    Blazor source, one project per course (NOT published)
-tools/       build-course.ps1, templates/        (NOT published)
-wrangler.toml  deploy.ps1  setup-zoho-mailer.ps1  SETUP.md   (repo root — not published)
+scripts/     BrainzieLanding/    ← the PowerShell module (psd1/psm1, Public/, Private/)
+tools/       templates/lesson.html
+wrangler.toml  SETUP.md          (repo root — not published)
 ```
 
 > **Functions location matters.** Because `wrangler.toml` sets
 > `pages_build_output_dir`, the `functions/` directory lives at the **project
 > root** (sibling of `wrangler.toml`), and deploys run **without** a positional
-> directory (`wrangler pages deploy`, not `wrangler pages deploy site`).
+> directory — the module does this correctly.
 
 GitHub remains the source of truth (push as usual), but **pushing does not
-publish** — publishing is `./deploy.ps1`. The `build-courses` GitHub Action
-still rebuilds the Blazor apps into `site/courses/<slug>/app` when
-`apps-src/**` changes; run `./deploy.ps1` (or `-BuildCourses` locally) to ship.
+publish** — publishing is `Publish-BrainzieLanding`. The `build-courses` GitHub
+Action still rebuilds the Blazor apps into `site/courses/<slug>/app` when
+`apps-src/**` changes.
 
-> ⚠️ **Cloudflare account.** Everything here deploys into the Cloudflare
-> account that owns the brainzie.co.uk zone — NOT the emsurge account whose
-> `CLOUDFLARE_API_TOKEN` may be set in your shell. `deploy.ps1` and
-> `setup-zoho-mailer.ps1` clear that variable automatically and use your
-> `npx wrangler login` identity.
+## The module
+
+```powershell
+Import-Module ./scripts/BrainzieLanding/BrainzieLanding.psd1
+
+Initialize-BrainzieLanding        # one-time: Pages project + LEADS KV + Turnstile secret
+Initialize-BrainzieZohoMailer …   # one-time: wire the Zoho mailer (see Email below)
+Build-BrainzieCourseApp -Course 08  # rebuild one course's Blazor app into site/
+Publish-BrainzieLanding           # deploy to production
+Publish-BrainzieLanding -Branch preview   # preview URL instead
+Publish-BrainzieLanding -BuildCourses     # rebuild all course apps first
+```
+
+> ⚠️ **Cloudflare account.** Everything deploys into the Cloudflare account
+> that owns the brainzie.co.uk zone — NOT the emsurge account whose
+> `CLOUDFLARE_API_TOKEN` may be set in your shell. The module clears that
+> variable automatically and uses your `npx wrangler login` identity
+> (or pass `-ApiToken` with a brainzie-account token).
 
 ---
 
@@ -41,13 +57,14 @@ still rebuilds the Blazor apps into `site/courses/<slug>/app` when
 ### 1. Log in and scaffold
 ```powershell
 npx wrangler login          # browser sign-in to the BRAINZIE Cloudflare account
-./deploy.ps1 -Setup         # Pages project + LEADS KV namespace + Turnstile secret prompt
+Import-Module ./scripts/BrainzieLanding/BrainzieLanding.psd1
+Initialize-BrainzieLanding
 ```
 Copy the returned KV namespace **id** into `wrangler.toml` → `[[kv_namespaces]] id = "…"`.
 
 ### 2. First deploy (to the *.pages.dev URL)
 ```powershell
-./deploy.ps1
+Publish-BrainzieLanding
 ```
 Verify everything at `https://brainzie.pages.dev` — pages, lessons, Blazor
 demos, and the contact form (submissions land in the LEADS KV even before
@@ -66,35 +83,44 @@ at GitHub Pages). Then:
 ### 4. Turnstile (free anti-spam) — recommended
 1. Dashboard → **Turnstile** → **Add widget** → hostnames `brainzie.co.uk` (+ `localhost`).
 2. Paste the **Site key** into `site/contact.html` → `data-turnstile-sitekey="…"`.
-3. Secret key: `npx wrangler pages secret put TURNSTILE_SECRET --project-name brainzie`
-   (or via `./deploy.ps1 -Setup`). Redeploy.
+3. Secret key: re-run `Initialize-BrainzieLanding` (or
+   `npx wrangler pages secret put TURNSTILE_SECRET --project-name brainzie`). Redeploy.
 
 ### 5. Email — Zoho Mail API (no SendGrid, no DNS changes)
-The form sends **from the hello@brainzie.co.uk mailbox itself** via the Zoho
-Mail API, so SPF/DKIM/DMARC are inherently right — the same property emsurge
-gets from Microsoft Graph `sendMail`.
+**Mailbox model:** `hello@brainzie.co.uk` is a **group** — it cannot sign in or
+own OAuth grants. The only real user is `directors@brainzie.co.uk`. So the form
+sends **FROM directors@ TO hello@** (the group receives and fans out to its
+members as usual). Sending from the real mailbox keeps SPF/DKIM/DMARC
+inherently right — the same property emsurge gets from Microsoft Graph
+`sendMail`.
 
 **Single-mailbox restriction, by construction:** a Zoho **Self Client** refresh
-token is minted *by* the signed-in user. Generate it while signed in as
-`hello@brainzie.co.uk`, scoped to `ZohoMail.messages.CREATE` (send-only), and
-the token can only ever act as that one mailbox. (Microsoft app-only tokens are
-tenant-wide until an Exchange application access policy narrows them — Zoho
-needs no equivalent policy.)
+token is minted *by* the signed-in user. Generated as `directors@`, scoped to
+`ZohoMail.messages.CREATE` (send-only), it can only ever act as that one
+mailbox. (Microsoft app-only tokens are tenant-wide until an Exchange
+application access policy narrows them — Zoho needs no equivalent policy.)
 
-1. Sign in to Zoho **as hello@brainzie.co.uk** → https://api-console.zoho.com →
+1. Sign in to Zoho **as directors@brainzie.co.uk** → https://api-console.zoho.com →
    **ADD CLIENT → Self Client → CREATE** → copy Client ID + Secret.
 2. **Generate Code** tab: scope `ZohoMail.messages.CREATE,ZohoMail.accounts.READ`,
    time 10 minutes → copy the code.
 3. Immediately run:
    ```powershell
-   ./setup-zoho-mailer.ps1 -ClientId 1000.XXXX -ClientSecret YYYY -GrantCode 1000.ZZZZ
+   Initialize-BrainzieZohoMailer -ClientId 1000.XXXX -ClientSecret YYYY -GrantCode 1000.ZZZZ
    ```
    It exchanges the code for a permanent refresh token, verifies the token is
-   bound to hello@, fills `wrangler.toml`, and uploads the two secrets.
-4. `./deploy.ps1`
+   bound to directors@, lists the From addresses the token may use, fills
+   `wrangler.toml`, and uploads the two secrets.
+4. `Publish-BrainzieLanding`
+
+> Optional: if you enable **"send emails as group"** for directors@ in the
+> hello@ group's settings (Zoho Mail admin), step 3's verification will list
+> hello@ as an available From address — you can then set
+> `CONTACT_FROM = "hello@brainzie.co.uk"` in `wrangler.toml` so enquiries
+> appear to come from hello@ directly.
 
 > ⚠️ Do **not** enable Cloudflare Email Routing on brainzie.co.uk — its wizard
-> replaces the Zoho MX records and would break inbound mail to hello@.
+> replaces the Zoho MX records and would break inbound mail.
 
 Until step 5, read captured leads from KV any time:
 ```powershell
@@ -103,14 +129,6 @@ npx wrangler kv key get "contact:…" --binding LEADS --remote
 ```
 
 ---
-
-## Deploy (after one-time setup)
-
-```powershell
-./deploy.ps1                  # publish to production
-./deploy.ps1 -Branch preview  # publish a preview URL (not the live domain)
-./deploy.ps1 -BuildCourses    # rebuild the Blazor course apps first (needs .NET SDK)
-```
 
 ## Local development
 
@@ -127,8 +145,9 @@ posts same-origin, so it needs `wrangler pages dev` to actually submit).
 1. Verifies the Turnstile token (skipped if `TURNSTILE_SECRET` unset).
 2. Validates name / email / message.
 3. Writes the submission to **KV** (`LEADS`) — a lead is never lost.
-4. Emails it to `CONTACT_TO` via the **Zoho Mail API** (access token cached in
-   KV; account id auto-discovered or pinned via `ZOHO_ACCOUNT_ID`).
+4. Emails it to `CONTACT_TO` (hello@, the group) via the **Zoho Mail API**,
+   sent from `CONTACT_FROM` (directors@). Access token cached in KV; account
+   id auto-discovered or pinned via `ZOHO_ACCOUNT_ID`.
 5. Returns JSON; the page shows a success or error message inline.
 
 Adding another form = give any `<form>` a `data-form-type="…"` (e.g.

@@ -37,11 +37,12 @@ jobs:
       - name: Build every course app
         shell: pwsh
         run: |
+          Import-Module ./scripts/BrainzieLanding/BrainzieLanding.psd1 -Force
           $courses = Get-ChildItem -Directory apps-src -Filter 'Course*' |
                      ForEach-Object { ($_.Name -replace '^Course','') }
           foreach ($c in $courses) {
             Write-Host "::group::Course $c"
-            pwsh tools/build-course.ps1 -Course $c
+            Build-BrainzieCourseApp -Course $c
             Write-Host "::endgroup::"
           }
 

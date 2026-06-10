@@ -4,16 +4,18 @@
 # Pages Function in ./functions/api/contact.js — same layout as
 # emsurge-landingpage.
 #
-# Secrets are NOT stored here. Set them with (see SETUP.md):
-#   npx wrangler pages secret put TURNSTILE_SECRET    --project-name brainzie
-#   npx wrangler pages secret put ZOHO_CLIENT_SECRET  --project-name brainzie
-#   npx wrangler pages secret put ZOHO_REFRESH_TOKEN  --project-name brainzie
+# Secrets are NOT stored here. They are uploaded by the BrainzieLanding
+# PowerShell module (scripts/BrainzieLanding):
+#   Initialize-BrainzieLanding      -> TURNSTILE_SECRET
+#   Initialize-BrainzieZohoMailer   -> ZOHO_CLIENT_SECRET, ZOHO_REFRESH_TOKEN
 #
-# Email is sent from the hello@brainzie.co.uk Zoho mailbox itself via the Zoho
-# Mail API (a Self Client OAuth app whose refresh token is minted BY hello@ —
-# so it can only ever send as that one mailbox; the single-inbox restriction is
-# inherent, the Zoho analogue of emsurge's Exchange application access policy).
-# Until the Zoho secrets are set, submissions are still captured in LEADS KV.
+# Email goes through the Zoho Mail API. hello@brainzie.co.uk is a GROUP (it
+# cannot sign in or own OAuth grants); the only user is directors@brainzie.co.uk,
+# so the Self Client refresh token is minted BY directors@ and the form sends
+# FROM directors@ TO hello@ (the group receives fine). The token is inherently
+# bound to that one mailbox — the Zoho analogue of emsurge's Exchange
+# application access policy. Until the Zoho secrets are set, submissions are
+# still captured in LEADS KV.
 
 name = "brainzie"
 compatibility_date = "2025-06-01"
@@ -21,13 +23,14 @@ pages_build_output_dir = "site"
 
 # --- Plain (non-secret) environment variables exposed to the contact Function ---
 [vars]
-CONTACT_TO   = "hello@brainzie.co.uk"   # where form submissions are emailed
-CONTACT_FROM = "hello@brainzie.co.uk"   # the Zoho mailbox the app sends as
+CONTACT_TO   = "hello@brainzie.co.uk"       # the group every submission is emailed to
+CONTACT_FROM = "directors@brainzie.co.uk"   # the USER mailbox the app sends as (hello@ is a group and can't authenticate;
+                                            # flip this to hello@ only if "send emails as group" is enabled for directors@)
 # Zoho data centre bases. brainzie.co.uk MX is mx.zoho.com → the .com DC.
 # If the API console says otherwise (e.g. accounts.zoho.eu), change BOTH.
 ZOHO_ACCOUNTS_BASE = "https://accounts.zoho.com"
 ZOHO_MAIL_BASE     = "https://mail.zoho.com"
-ZOHO_CLIENT_ID     = "REPLACE_WITH_ZOHO_CLIENT_ID"   # Self Client id (not secret) — see setup-zoho-mailer.ps1
+ZOHO_CLIENT_ID     = "REPLACE_WITH_ZOHO_CLIENT_ID"   # Self Client id (not secret) — filled by Initialize-BrainzieZohoMailer
 ZOHO_ACCOUNT_ID    = ""                              # optional; auto-discovered and cached in KV when empty
 
 # --- KV: durable backup of every form submission (+ Zoho token cache) ---

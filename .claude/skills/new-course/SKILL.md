@@ -30,12 +30,12 @@ like `site/courses/07-software-advanced/index.html`, and the Blazor app
      - `wwwroot/index.html`: set `<base href="/courses/<NN>-<slug>/app/" />`, drop Bootstrap, point to a minimal `css/app.css` (chromeless — the pages are embedded in iframes).
      - `App.razor`: NO `<Router>`. Select the page from the URL **fragment** (`#/<NN>/lesson-…/demo`) — fragment routing keeps the sub-folder app host-agnostic (no SPA-fallback or 404 configuration needed). Copy Course08's `App.razor` switch and `MainLayout.razor` (chromeless), `_Imports.razor`, and a `Pages/Catalog.razor`.
      - Delete the template's sample pages (Counter/Weather, etc.).
-   - Register the course in `tools/build-course.ps1`: add `'<NN>' = '<NN>-<slug>'` to the `$slugs` map.
-   - Build: `pwsh tools/build-course.ps1 -Course <NN>` (outputs to `site/courses/<NN>-<slug>/app`). The `build-courses` GitHub Action also rebuilds on push.
+   - Register the course in `scripts/BrainzieLanding/Private/Get-BrainzieCourseSlugs.ps1`: add `'<NN>' = '<NN>-<slug>'` to the map.
+   - Build: `Import-Module ./scripts/BrainzieLanding/BrainzieLanding.psd1; Build-BrainzieCourseApp -Course <NN>` (outputs to `site/courses/<NN>-<slug>/app`). The `build-courses` GitHub Action also rebuilds on push.
 
 6. **Verify locally.** Serve the site (`python -m http.server 8123 --directory F:\src\brainzie\site`, or `npx wrangler pages dev` from the repo root) and check: the new course page renders with styling, it's linked from `courses.html` (and home), no broken links, and — if applicable — the Blazor app boots. Use the preview tools if available.
 
-7. **Commit, push & publish.** Stage `site/courses/<NN>-<slug>/**`, the edited `site/courses.html`/`site/index.html`, and any `apps-src/**`; commit and push to `main`. **Pushing does not publish** — run `./deploy.ps1` from the repo root to publish to Cloudflare Pages (needs the brainzie Cloudflare login; see SETUP.md).
+7. **Commit, push & publish.** Stage `site/courses/<NN>-<slug>/**`, the edited `site/courses.html`/`site/index.html`, and any `apps-src/**`; commit and push to `main`. **Pushing does not publish** — publish with `Publish-BrainzieLanding` (from the BrainzieLanding module; needs the brainzie Cloudflare login — see SETUP.md).
 
 ## Then add lessons
 Use the **new-lesson** skill to add each lesson to the new course.
@@ -43,4 +43,4 @@ Use the **new-lesson** skill to add each lesson to the new course.
 ## Guardrails
 - Match the brainzie design system; copy an existing course page rather than building markup from scratch.
 - Only create a Blazor project if the course genuinely needs interactive demos — otherwise keep it to static HTML pages.
-- Deployment model: Cloudflare Pages (project `brainzie`, custom domain brainzie.co.uk), published with `./deploy.ps1` from the repo root — same layout as emsurge-landingpage (`site/` output dir + root `functions/`). GitHub is source control only. `.gitattributes` keeps the SRI-hashed WASM bytes byte-exact. Deploy with the BRAINZIE Cloudflare account, never the emsurge token (the script guards this).
+- Deployment model: Cloudflare Pages (project `brainzie`, custom domain brainzie.co.uk), published with `Publish-BrainzieLanding` from the BrainzieLanding module (`scripts/BrainzieLanding`) — same layout as emsurge-landingpage (`site/` output dir + root `functions/`). GitHub is source control only. `.gitattributes` keeps the SRI-hashed WASM bytes byte-exact. Deploy with the BRAINZIE Cloudflare account, never the emsurge token (the module guards this).
