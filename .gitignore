@@ -8,6 +8,6 @@ apps-src/**/bin/
 apps-src/**/obj/
 apps-src/_publish/
 
-# Cloudflare Worker local state (contact form backend)
-cloudflare/.wrangler/
-cloudflare/node_modules/
+# Cloudflare Pages local state
+.wrangler/
+node_modules/

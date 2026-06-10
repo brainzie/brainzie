@@ -2,4 +2,4 @@
 # Integrity / SRI hashes in blazor.boot.json and the import map). Git must
 # store these bytes verbatim — any line-ending conversion would change the
 # hashes and stop the app booting in production (and on the Linux CI runner).
-courses/**/app/** -text
+site/courses/**/app/** -text

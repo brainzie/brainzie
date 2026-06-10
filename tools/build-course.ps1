@@ -9,10 +9,10 @@
 
     Each course that needs interactivity has:
       apps-src/Course<NN>/Course<NN>.csproj   ← Blazor source
-      courses/<slug>/app/                      ← published static output (committed)
+      site/courses/<slug>/app/                 ← published static output (committed)
 
-    Blazor WASM publishes to plain static files, so the live site (GitHub Pages
-    today, possibly Cloudflare later) needs no .NET at all.
+    Blazor WASM publishes to plain static files, so the live site (Cloudflare
+    Pages) needs no .NET at all.
 
 .EXAMPLE
     pwsh tools/build-course.ps1 -Course 08
@@ -36,7 +36,7 @@ if (-not $slugs.ContainsKey($Course)) {
 
 $slug    = $slugs[$Course]
 $project = Join-Path $repoRoot "apps-src/Course$Course/Course$Course.csproj"
-$appDir  = Join-Path $repoRoot "courses/$slug/app"
+$appDir  = Join-Path $repoRoot "site/courses/$slug/app"
 $tempDir = Join-Path $repoRoot "apps-src/_publish/Course$Course"
 
 if (-not (Test-Path $project)) { throw "Project not found: $project" }
@@ -61,11 +61,7 @@ Copy-Item -Recurse -Force (Join-Path $publishedWwwroot '*') $appDir
 # own gzip and never uses these, so they are pure committed-repo bloat.
 Get-ChildItem -Path $appDir -Recurse -Include *.br, *.gz -File | Remove-Item -Force
 
-# .nojekyll inside the app folder too (belt and braces for the _framework dir).
-$nojekyll = Join-Path $appDir '.nojekyll'
-if (-not (Test-Path $nojekyll)) { New-Item -ItemType File -Path $nojekyll | Out-Null }
-
 # Tidy the temp publish output.
 Remove-Item -Recurse -Force $tempDir
 
-Write-Host "Done. Output: courses/$slug/app" -ForegroundColor Green
+Write-Host "Done. Output: site/courses/$slug/app" -ForegroundColor Green

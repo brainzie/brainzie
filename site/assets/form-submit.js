@@ -1,17 +1,12 @@
 /* Shared client-side handler for Brainzie forms.
    Attaches to any <form data-form-type="…">, serialises all named fields,
    includes the Turnstile token (when configured), and POSTs JSON to the
-   contact Worker on api.brainzie.co.uk (the site itself is static).
+   same-origin Pages Function at /api/contact (works in production and under
+   `npx wrangler pages dev` locally).
    Expects a .form-status element and a submit button inside the form. */
 (function () {
-  // Local development: `npx wrangler dev` serves the Worker on :8787.
-  var API_BASE =
-    location.hostname === "localhost" || location.hostname === "127.0.0.1"
-      ? "http://localhost:8787"
-      : "https://api.brainzie.co.uk";
-
   // Render Turnstile only when a site key is configured (data-turnstile-sitekey).
-  // Until then the form still works — the Worker skips verification too.
+  // Until then the form still works — the Function skips verification too.
   function mountTurnstile(form) {
     var sitekey = form.getAttribute("data-turnstile-sitekey");
     if (!sitekey) return;
@@ -61,7 +56,7 @@
 
       if (btn) { btn.disabled = true; btn.textContent = "Sending…"; }
       try {
-        var res = await fetch(API_BASE + "/api/contact", {
+        var res = await fetch("/api/contact", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),

@@ -10,8 +10,9 @@ with Previous/Next), styled by `assets/lesson.css`. Interactivity that needs rea
 code runs as a Blazor WebAssembly demo/exercise embedded via `<iframe>`. Everything
 else is plain HTML — **never show JavaScript to students** (the courses teach C#/Blazor).
 
-See the worked example: `courses/08-software-mixed/lessons/lesson-11-button/index.html`
-and the Blazor app under `apps-src/Course08/`.
+See the worked example: `site/courses/08-software-mixed/lessons/lesson-11-button/index.html`
+and the Blazor app under `apps-src/Course08/`. (`site/` is the published web
+root on Cloudflare Pages, so URLs drop the prefix: `/courses/...`.)
 
 ## Standard lesson structure (default for every lesson except a course's first)
 
@@ -32,7 +33,7 @@ A course's **first** lesson is typically an intro and may deviate; ask the user 
 
 1. **Gather inputs.** Course (slug, e.g. `08-software-mixed`), lesson number, topic, title, goal, and the content for each section above. Ask for whatever is missing rather than inventing pedagogy.
 
-2. **Pick the lesson number and folder.** Lessons are numbered by their position in the course. Folder: `courses/<course-slug>/lessons/lesson-<NN>-<topic>/index.html` (NN zero-padded, topic kebab-case). If renumbering an existing lesson, rename the folder, its routes/fragments, and any component names together (see "Renumbering" below).
+2. **Pick the lesson number and folder.** Lessons are numbered by their position in the course. Folder: `site/courses/<course-slug>/lessons/lesson-<NN>-<topic>/index.html` (NN zero-padded, topic kebab-case). If renumbering an existing lesson, rename the folder, its routes/fragments, and any component names together (see "Renumbering" below).
 
 3. **Create the page from the template.** Copy `tools/templates/lesson.html` to the new folder as `index.html`. Replace every `{{TOKEN}}` (PAGE_TITLE, META_DESC, EYEBROW, COURSE_LABEL, LESSON_NUMBER, LESSON_TITLE, LESSON_GOAL) and fill each step's `<!-- FILL -->` content. Duplicate the Main content `<section class="step">` for as many content steps as needed — the stepper counts steps automatically. Escape `<` `>` `&` as `&lt; &gt; &amp;` inside `<pre><code>`.
    - The stepper, full-screen toggle (glowing ⛶ button), top-and-bottom Previous/Next, browser-history step navigation, and Copy buttons are all provided by `assets/lesson.js` (linked at the foot of the template). Don't re-implement them; just keep the markup contract (`.lesson-progress` with `.fs-title`+`.fs-btn`, `#steps` of `.step`, a bottom `.lesson-nav` with `.prev`/`.next`, and `class="lesson-shell"` on the wrapping `<section>`).
@@ -43,14 +44,14 @@ A course's **first** lesson is typically an intro and may deviate; ask the user 
    - Register its namespace in `apps-src/Course<NN>/_Imports.razor`, add a `case "<NN>/lesson-<NN>-<topic>/demo":` (and/or `/exercise`) to `apps-src/Course<NN>/App.razor`, and a link in `Pages/Catalog.razor`.
    - Embed in the lesson with the `.tryit` block (already stubbed, commented, in the template):
      `<iframe src="../../app/#/<NN>/lesson-<NN>-<topic>/demo" ...>`. The `../../app/` path and `#fragment` routing are required — see the lessons-platform conventions in the project memory and `apps-src/Course<NN>/App.razor` for why.
-   - Rebuild: `pwsh tools/build-course.ps1 -Course <NN>` (publishes to `courses/<slug>/app`).
+   - Rebuild: `pwsh tools/build-course.ps1 -Course <NN>` (publishes to `site/courses/<slug>/app`).
 
-5. **Link the lesson from the course summary.** In `courses/<course-slug>/index.html`, add a row to the "Interactive lessons" `<ol class="sessions">` (create that section if missing — see Course 08 for the pattern):
+5. **Link the lesson from the course summary.** In `site/courses/<course-slug>/index.html`, add a row to the "Interactive lessons" `<ol class="sessions">` (create that section if missing — see Course 08 for the pattern):
    `<li><span class="s-n"><NN></span><div><h4><a href="lessons/lesson-<NN>-<topic>/index.html">Title</a></h4><p>One-line summary.</p></div></li>`
 
-6. **Verify locally.** Serve the repo root over HTTP (e.g. `python -m http.server 8123 --directory F:\src\brainzie`) and open the lesson. Check: stepper Next/Previous works, code Copy buttons work, any iframes boot the Blazor app, and there are no broken links. Use the preview tools if available.
+6. **Verify locally.** Serve the site over HTTP (`python -m http.server 8123 --directory F:\src\brainzie\site`, or `npx wrangler pages dev` from the repo root for the contact Function too) and open the lesson. Check: stepper Next/Previous works, code Copy buttons work, any iframes boot the Blazor app, and there are no broken links. Use the preview tools if available.
 
-7. **Commit & deploy.** Stage the lesson, the course index, and any `apps-src/**` + `courses/<slug>/app/**` changes; commit and push to `main`. GitHub Pages (legacy, from `main`) redeploys automatically. If you changed `apps-src/**`, the `build-courses` Action rebuilds and commits the app output too — `git pull` afterwards to sync.
+7. **Commit, push & publish.** Stage the lesson, the course index, and any `apps-src/**` + `site/courses/<slug>/app/**` changes; commit and push to `main`. **Pushing does not publish** — the site is on Cloudflare Pages: run `./deploy.ps1` from the repo root (needs the brainzie Cloudflare login; see SETUP.md). If you changed `apps-src/**`, the `build-courses` Action also rebuilds and commits the app output — `git pull` afterwards to sync.
 
 ## Renumbering an existing lesson
 
