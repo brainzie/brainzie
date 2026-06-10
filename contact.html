@@ -28,6 +28,50 @@
   </div></div>
 
   <section><div class="wrap">
+    <div class="form-card">
+      <h2 style="margin-bottom:6px">Send us a message</h2>
+      <p style="margin-bottom:24px">Fill this in and it lands straight in our inbox.</p>
+      <!-- When you create a Turnstile widget, paste its SITE key into
+           data-turnstile-sitekey below (see cloudflare/SETUP.md). -->
+      <form data-form-type="Contact" data-turnstile-sitekey="" novalidate>
+        <div class="form-grid">
+          <div class="field">
+            <label for="cf-name">Name *</label>
+            <input id="cf-name" name="name" type="text" autocomplete="name" required />
+          </div>
+          <div class="field">
+            <label for="cf-email">Email *</label>
+            <input id="cf-email" name="email" type="email" autocomplete="email" required />
+          </div>
+          <div class="field">
+            <label for="cf-school">School / organisation</label>
+            <input id="cf-school" name="school" type="text" autocomplete="organization" />
+          </div>
+          <div class="field">
+            <label for="cf-topic">Topic</label>
+            <select id="cf-topic" name="topic">
+              <option value="">Choose…</option>
+              <option>Courses</option>
+              <option>Software</option>
+              <option>Brainzie Money</option>
+              <option>Brainzie Swim</option>
+              <option>Something else</option>
+            </select>
+          </div>
+          <div class="field full">
+            <label for="cf-message">Message *</label>
+            <textarea id="cf-message" name="message" required></textarea>
+          </div>
+          <div class="full turnstile-slot"></div>
+          <div class="full" style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+            <button class="btn btn-primary" type="submit">Send message</button>
+            <span class="form-status" role="status" aria-live="polite"></span>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <div class="center" style="margin:54px 0 10px"><p class="eyebrow">Or pick a topic</p></div>
     <div class="cards">
       <a class="card" href="mailto:hello@brainzie.co.uk?subject=Courses%20enquiry">
         <div class="ico">🎓</div><h3>Courses</h3><p>Bring a Brainzie programme to your students — STEM enrichment, challenge prep or professional software development.</p><span class="more">hello@brainzie.co.uk →</span>
@@ -56,5 +100,7 @@
     <div class="foot-col"><h5>Company</h5><a href="contact.html">Contact</a><a href="brand-guidelines.html">Brand guidelines</a></div>
     <p class="foot-note">© 2026 Brainzie Ltd · Nurturing brains, helping everyone, always improving.</p>
   </div></footer>
+
+  <script src="assets/form-submit.js"></script>
 </body>
 </html>
