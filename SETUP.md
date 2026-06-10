@@ -87,37 +87,50 @@ at GitHub Pages). Then:
    `npx wrangler pages secret put TURNSTILE_SECRET --project-name brainzie`). Redeploy.
 
 ### 5. Email — Zoho Mail API (no SendGrid, no DNS changes)
-**Mailbox model:** `hello@brainzie.co.uk` is a **group** — it cannot sign in or
-own OAuth grants. The only real user is `directors@brainzie.co.uk`. So the form
-sends **FROM directors@ TO hello@** (the group receives and fans out to its
-members as usual). Sending from the real mailbox keeps SPF/DKIM/DMARC
-inherently right — the same property emsurge gets from Microsoft Graph
-`sendMail`.
+**Identity model — a dedicated service account, never a person's account.**
+`hello@brainzie.co.uk` is a **group** — groups cannot sign in or own OAuth
+grants — and personal accounts shouldn't hold unattended credentials. So a
+dedicated service user, **`svc-mailer@brainzie.co.uk`** ("Brainzie Website
+Mailer"), owns the OAuth grant: you can disable, rotate or audit it in the
+Zoho admin console without touching anyone's personal account. The `svc-<function>@`
+naming scales — add `svc-backup@`, `svc-reports@`, … later, one identity per
+function, each with only the access that function needs.
+
+The service user is made a **member of each group it should send as** (with
+the group's *"members can send emails as group"* setting enabled), so the form
+sends **FROM hello@ TO hello@**. Mail leaves through Zoho itself, keeping
+SPF/DKIM/DMARC inherently right — the same property emsurge gets from
+Microsoft Graph `sendMail`.
 
 **Single-mailbox restriction, by construction:** a Zoho **Self Client** refresh
-token is minted *by* the signed-in user. Generated as `directors@`, scoped to
-`ZohoMail.messages.CREATE` (send-only), it can only ever act as that one
-mailbox. (Microsoft app-only tokens are tenant-wide until an Exchange
-application access policy narrows them — Zoho needs no equivalent policy.)
+token is minted *by* the signed-in user. Generated as `svc-mailer@`, scoped to
+`ZohoMail.messages.CREATE` (send-only), it can only ever act as that mailbox
+plus its granted group send-as addresses. (Microsoft app-only tokens are
+tenant-wide until an Exchange application access policy narrows them — Zoho
+needs no equivalent policy.)
 
-1. Sign in to Zoho **as directors@brainzie.co.uk** → https://api-console.zoho.com →
+1. Zoho **Admin console → Users**: create `svc-mailer@brainzie.co.uk`
+   (display name "Brainzie Website Mailer"; needs a mail license).
+2. **Groups → hello@**: add `svc-mailer@` as a member and enable
+   *"members can send emails as group"* (or the per-member send-as option).
+3. Sign in to Zoho **as svc-mailer@** → https://api-console.zoho.com →
    **ADD CLIENT → Self Client → CREATE** → copy Client ID + Secret.
-2. **Generate Code** tab: scope `ZohoMail.messages.CREATE,ZohoMail.accounts.READ`,
+4. **Generate Code** tab: scope `ZohoMail.messages.CREATE,ZohoMail.accounts.READ`,
    time 10 minutes → copy the code.
-3. Immediately run:
+5. Immediately run:
    ```powershell
    Initialize-BrainzieZohoMailer -ClientId 1000.XXXX -ClientSecret YYYY -GrantCode 1000.ZZZZ
    ```
    It exchanges the code for a permanent refresh token, verifies the token is
-   bound to directors@, lists the From addresses the token may use, fills
+   bound to the service account, checks that `CONTACT_FROM` (hello@) is among
+   the From addresses the token may use (it warns if step 2 was missed), fills
    `wrangler.toml`, and uploads the two secrets.
-4. `Publish-BrainzieLanding`
+6. `Publish-BrainzieLanding`
 
-> Optional: if you enable **"send emails as group"** for directors@ in the
-> hello@ group's settings (Zoho Mail admin), step 3's verification will list
-> hello@ as an available From address — you can then set
-> `CONTACT_FROM = "hello@brainzie.co.uk"` in `wrangler.toml` so enquiries
-> appear to come from hello@ directly.
+> Named the account differently (e.g. `auto@`)? Pass
+> `-ExpectedMailbox auto@brainzie.co.uk` in step 5 — nothing else changes.
+> If you skip the send-as-group setting, set
+> `CONTACT_FROM = "svc-mailer@brainzie.co.uk"` in `wrangler.toml` instead.
 
 > ⚠️ Do **not** enable Cloudflare Email Routing on brainzie.co.uk — its wizard
 > replaces the Zoho MX records and would break inbound mail.

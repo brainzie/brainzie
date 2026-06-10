@@ -1,45 +1,57 @@
 <#
 .SYNOPSIS
   One-time wiring of the Zoho Mail "Self Client" that lets the website contact
-  form send email. The Zoho analogue of emsurge's setup-graph-mailer.ps1 +
-  setup-exchange-access-policy.ps1 in one step.
+  form send email unattended. The Zoho analogue of emsurge's
+  setup-graph-mailer.ps1 + setup-exchange-access-policy.ps1 in one step.
 
 .DESCRIPTION
-  IMPORTANT — hello@brainzie.co.uk is a GROUP, not a user. Groups cannot sign
-  in or own OAuth grants, so the Self Client grant code must be generated while
-  signed in as the real user, directors@brainzie.co.uk. The refresh token is
-  then bound to the directors@ mailbox and the form sends FROM directors@ TO
-  hello@ (groups receive mail fine — they just can't authenticate).
+  IDENTITY MODEL — a dedicated service account, never a person's account:
+    * hello@brainzie.co.uk is a GROUP — groups cannot sign in or own OAuth
+      grants.
+    * A dedicated service user (default: svc-mailer@brainzie.co.uk, display
+      name "Brainzie Website Mailer") owns the OAuth grant. Disable, rotate or
+      audit it in the Zoho admin console without touching anyone's personal
+      account. One service identity per function (svc-<function>@) keeps
+      permissions least-privilege as more automation is added.
+    * The service user is made a member of each group it should send AS, with
+      the group's "members can send emails as group" setting enabled. Then
+      CONTACT_FROM can be the group address (hello@) and enquiries appear to
+      come from the group itself.
 
   Single-mailbox restriction, by construction: a Self Client refresh token is
-  minted BY the signed-in Zoho user, so it can only ever act as that mailbox —
-  there is no tenant-wide surface to scope down (unlike Microsoft Graph
-  app-only, which needs an Exchange application access policy on top). Keep the
-  scope to ZohoMail.messages.CREATE (+ accounts.READ) so the token can send
-  mail but never read it.
+  minted BY the signed-in Zoho user, so it can only ever act as that user's
+  mailbox (plus any group send-as addresses granted to it) — no tenant-wide
+  surface to scope down, unlike Microsoft Graph app-only. Keep the scope to
+  ZohoMail.messages.CREATE (+ accounts.READ) so the token can send mail but
+  never read it.
 
-  Optional upgrade: if you enable "send emails as group" for directors@ in the
-  hello@ group settings (Zoho Mail admin), the verification step below will
-  list hello@ as an available From address and you can flip CONTACT_FROM in
-  wrangler.toml to hello@brainzie.co.uk.
-
-  MANUAL STEP FIRST (Zoho has no CLI for this — ~2 minutes):
-    1. Sign in to Zoho as directors@brainzie.co.uk and open
-       https://api-console.zoho.com (if your account lives on the EU DC it
-       redirects to api-console.zoho.eu — then pass
+  MANUAL STEPS FIRST (Zoho admin console — ~5 minutes):
+    1. Admin console -> Users -> add the service user (svc-mailer@brainzie.co.uk,
+       display name "Brainzie Website Mailer"; needs a mail license).
+    2. Groups -> hello@ -> add svc-mailer@ as a member and enable
+       "members can send emails as group" (or the per-member send-as option).
+    3. Sign in to Zoho AS the service user and open https://api-console.zoho.com
+       (if it redirects to api-console.zoho.eu, pass
        -AccountsBase https://accounts.zoho.eu and update wrangler.toml).
-    2. ADD CLIENT -> "Self Client" -> CREATE. Copy the Client ID and Client Secret.
-    3. "Generate Code" tab ->
+    4. ADD CLIENT -> "Self Client" -> CREATE. Copy the Client ID and Client Secret.
+    5. "Generate Code" tab ->
          Scope:       ZohoMail.messages.CREATE,ZohoMail.accounts.READ
          Time:        10 minutes
          Description: brainzie website mailer
        -> CREATE -> copy the code (it expires quickly — run this straight away).
 
   The function exchanges the code for a permanent refresh token, verifies the
-  token is bound to directors@, lists the From addresses the token may use,
-  writes ZOHO_CLIENT_ID + ZOHO_ACCOUNT_ID into wrangler.toml, and uploads
+  token is bound to the service account, lists the From addresses the token
+  may use (hello@ should appear once step 2 is done — if it doesn't, fix the
+  group setting or set CONTACT_FROM to the service address), writes
+  ZOHO_CLIENT_ID + ZOHO_ACCOUNT_ID into wrangler.toml, and uploads
   ZOHO_CLIENT_SECRET + ZOHO_REFRESH_TOKEN as Cloudflare Pages secrets.
   After it succeeds, redeploy:  Publish-BrainzieLanding
+
+.PARAMETER ExpectedMailbox
+  The service account the grant should be bound to. Default
+  svc-mailer@brainzie.co.uk — pass your own (e.g. auto@brainzie.co.uk) if you
+  named the account differently. Mismatch is a warning, not a failure.
 
 .EXAMPLE
   Import-Module ./scripts/BrainzieLanding/BrainzieLanding.psd1
@@ -53,7 +65,7 @@ function Initialize-BrainzieZohoMailer {
         [Parameter(Mandatory)][string]$GrantCode,
         [string]$AccountsBase = 'https://accounts.zoho.com',
         [string]$MailBase = 'https://mail.zoho.com',
-        [string]$ExpectedMailbox = 'directors@brainzie.co.uk',
+        [string]$ExpectedMailbox = 'svc-mailer@brainzie.co.uk',
         [string]$PagesProject = 'brainzie',
         [string]$ApiToken = ''
     )
@@ -74,7 +86,7 @@ function Initialize-BrainzieZohoMailer {
     }
     Write-BrainzieOk 'Refresh token obtained.'
 
-    # --- 2. Verify: the token must be bound to the expected USER mailbox ---
+    # --- 2. Verify: the token must be bound to the SERVICE account ---
     Write-BrainzieStep 'Verifying mailbox binding'
     $accounts = Invoke-RestMethod -Uri "$MailBase/api/accounts" -Headers @{ Authorization = "Zoho-oauthtoken $($tok.access_token)" }
     $primary = $accounts.data | Select-Object -First 1
@@ -82,23 +94,31 @@ function Initialize-BrainzieZohoMailer {
     $accountId = "$($primary.accountId)"
     Write-BrainzieOk "Token is bound to: $primaryAddress (accountId $accountId)"
     if ($primaryAddress -ne $ExpectedMailbox) {
-        Write-BrainzieWarn "Expected $ExpectedMailbox but the token belongs to $primaryAddress."
-        Write-BrainzieWarn "The mailer will send as $primaryAddress. If that's wrong, sign in to Zoho AS $ExpectedMailbox, regenerate the grant code, and re-run."
+        Write-BrainzieWarn "Expected the service account $ExpectedMailbox but the token belongs to $primaryAddress."
+        Write-BrainzieWarn 'If that is a PERSONAL account, stop: sign in to Zoho AS the service user, regenerate the grant code, and re-run.'
     }
 
-    # List the From addresses this token may use (CONTACT_FROM must be one of
-    # them; hello@ appears here only if "send as group" is enabled for the user).
+    # List the From addresses this token may use. CONTACT_FROM in wrangler.toml
+    # must be one of them; group addresses (hello@) appear once the group's
+    # "send emails as group" setting covers the service user.
+    $contactFrom = ''
+    $toml = Get-Content (Join-Path $repoRoot 'wrangler.toml') -Raw
+    if ($toml -match 'CONTACT_FROM\s*=\s*"([^"]+)"') { $contactFrom = $Matches[1] }
     try {
         $sendAs = @($primary.sendMailDetails | ForEach-Object { $_.fromAddress }) | Where-Object { $_ }
         if ($sendAs) {
             Write-BrainzieInfo "Available From addresses: $($sendAs -join ', ')"
-            Write-BrainzieInfo 'CONTACT_FROM in wrangler.toml must be one of these.'
+            if ($contactFrom -and ($sendAs -notcontains $contactFrom)) {
+                Write-BrainzieWarn "wrangler.toml CONTACT_FROM is '$contactFrom' but the token cannot send as it."
+                Write-BrainzieWarn "Either enable 'send emails as group' for $primaryAddress on that group, or set CONTACT_FROM to one of the addresses above (e.g. $primaryAddress)."
+            } else {
+                Write-BrainzieOk "CONTACT_FROM '$contactFrom' is sendable by this token."
+            }
         }
     } catch { Write-BrainzieInfo 'Could not list send-as addresses (fine — the primary address always works).' }
 
     # --- 3. Write the non-secret ids into wrangler.toml ---
     $tomlPath = Join-Path $repoRoot 'wrangler.toml'
-    $toml = Get-Content $tomlPath -Raw
     $toml = $toml -replace 'ZOHO_CLIENT_ID\s*=\s*"[^"]*"', "ZOHO_CLIENT_ID     = `"$ClientId`""
     $toml = $toml -replace 'ZOHO_ACCOUNT_ID\s*=\s*"[^"]*"', "ZOHO_ACCOUNT_ID    = `"$accountId`""
     [IO.File]::WriteAllText($tomlPath, $toml, (New-Object Text.UTF8Encoding $false))
@@ -115,5 +135,5 @@ function Initialize-BrainzieZohoMailer {
 
     Write-BrainzieStep 'Done'
     Write-BrainzieOk 'Now redeploy:  Publish-BrainzieLanding'
-    Write-BrainzieOk "The form will email hello@brainzie.co.uk (the group), sent from $primaryAddress via the Zoho Mail API."
+    Write-BrainzieOk "Submissions will be emailed to hello@brainzie.co.uk, sent by the $primaryAddress service identity."
 }

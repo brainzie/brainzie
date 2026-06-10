@@ -9,13 +9,15 @@
 #   Initialize-BrainzieLanding      -> TURNSTILE_SECRET
 #   Initialize-BrainzieZohoMailer   -> ZOHO_CLIENT_SECRET, ZOHO_REFRESH_TOKEN
 #
-# Email goes through the Zoho Mail API. hello@brainzie.co.uk is a GROUP (it
-# cannot sign in or own OAuth grants); the only user is directors@brainzie.co.uk,
-# so the Self Client refresh token is minted BY directors@ and the form sends
-# FROM directors@ TO hello@ (the group receives fine). The token is inherently
-# bound to that one mailbox — the Zoho analogue of emsurge's Exchange
-# application access policy. Until the Zoho secrets are set, submissions are
-# still captured in LEADS KV.
+# Email goes through the Zoho Mail API using a DEDICATED SERVICE ACCOUNT
+# (svc-mailer@brainzie.co.uk, "Brainzie Website Mailer") — never a person's
+# account, so the credential can be disabled/rotated/audited independently.
+# hello@brainzie.co.uk is a GROUP (groups cannot sign in or own OAuth grants);
+# the service user is a member of the group with "send emails as group"
+# enabled, so the form sends FROM hello@ TO hello@. The Self Client refresh
+# token is minted BY the service user and is inherently bound to it — the
+# Zoho analogue of emsurge's Exchange application access policy. Until the
+# Zoho secrets are set, submissions are still captured in LEADS KV.
 
 name = "brainzie"
 compatibility_date = "2025-06-01"
@@ -23,9 +25,10 @@ pages_build_output_dir = "site"
 
 # --- Plain (non-secret) environment variables exposed to the contact Function ---
 [vars]
-CONTACT_TO   = "hello@brainzie.co.uk"       # the group every submission is emailed to
-CONTACT_FROM = "directors@brainzie.co.uk"   # the USER mailbox the app sends as (hello@ is a group and can't authenticate;
-                                            # flip this to hello@ only if "send emails as group" is enabled for directors@)
+CONTACT_TO   = "hello@brainzie.co.uk"   # the group every submission is emailed to
+CONTACT_FROM = "hello@brainzie.co.uk"   # sent AS the group, via the svc-mailer@ service account's send-as-group
+                                        # permission. If that permission isn't granted (Initialize-BrainzieZohoMailer
+                                        # warns), set this to the service address (svc-mailer@brainzie.co.uk).
 # Zoho data centre bases. brainzie.co.uk MX is mx.zoho.com → the .com DC.
 # If the API console says otherwise (e.g. accounts.zoho.eu), change BOTH.
 ZOHO_ACCOUNTS_BASE = "https://accounts.zoho.com"

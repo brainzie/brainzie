@@ -6,15 +6,19 @@
 //      TURNSTILE_SECRET is configured).
 //   2. Stores a durable backup of every submission in the LEADS KV namespace,
 //      so a message is never lost even if email delivery hiccups.
-//   3. Emails the submission via the Zoho Mail API. hello@brainzie.co.uk is a
-//      GROUP (it cannot sign in or own OAuth grants); the only user is
-//      directors@brainzie.co.uk, so mail is sent FROM directors@ TO hello@
-//      (the group receives fine). Sending from the real mailbox keeps
-//      SPF/DKIM/DMARC inherently correct — NO DNS changes needed. The OAuth
-//      refresh token is a Zoho "Self Client" grant minted BY directors@ with
-//      only the ZohoMail.messages.CREATE (+ accounts.READ) scopes, so it can
-//      only ever act as that one mailbox — the Zoho analogue of emsurge's
-//      Exchange application access policy, enforced by construction.
+//   3. Emails the submission via the Zoho Mail API using a DEDICATED SERVICE
+//      ACCOUNT (svc-mailer@brainzie.co.uk) — never a person's account, so the
+//      credential can be disabled/rotated/audited independently in the Zoho
+//      admin console. hello@brainzie.co.uk is a GROUP (groups cannot sign in
+//      or own OAuth grants); the service user is a group member with "send
+//      emails as group" enabled, so mail goes FROM hello@ TO hello@. Mail
+//      leaves through Zoho itself, so SPF/DKIM/DMARC are inherently correct —
+//      NO DNS changes needed. The OAuth refresh token is a Zoho "Self Client"
+//      grant minted BY the service user with only the
+//      ZohoMail.messages.CREATE (+ accounts.READ) scopes, so it can only ever
+//      act as that mailbox (and its granted group send-as addresses) — the
+//      Zoho analogue of emsurge's Exchange application access policy,
+//      enforced by construction.
 //
 // The form posts a flat JSON object. Two reserved keys:
 //   formType               -> labels the email subject + KV key (default "Contact")
@@ -32,7 +36,9 @@
 //   ZOHO_MAIL_BASE      var, e.g. https://mail.zoho.com
 //   ZOHO_ACCOUNT_ID     var, optional                 (auto-discovered if empty)
 //   CONTACT_TO          "hello@brainzie.co.uk"        (recipient — the group)
-//   CONTACT_FROM        "directors@brainzie.co.uk"    (the USER mailbox the app sends as)
+//   CONTACT_FROM        "hello@brainzie.co.uk"        (sent as the group via the
+//                       service account's send-as-group permission; falls back
+//                       to svc-mailer@ if that permission isn't granted)
 
 const json = (obj, status = 200) =>
   new Response(JSON.stringify(obj), {
