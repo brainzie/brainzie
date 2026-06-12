@@ -4,6 +4,13 @@
 # Pages Function in ./functions/api/contact.js — same layout as
 # emsurge-landingpage.
 #
+# The site deploys via Cloudflare's git integration (SETUP.md "Publishing"):
+# pushing main publishes; Cloudflare's build system reads THIS file as the
+# source of truth (no build command, output = site/, functions/ picked up
+# automatically). The KV id and Zoho ids below MUST be real (not REPLACE_WITH_*
+# placeholders) before the git connection is made — with git builds there is
+# no deploy script left to substitute them.
+#
 # Secrets are NOT stored here. They are uploaded by the BrainzieLanding
 # PowerShell module (scripts/BrainzieLanding):
 #   Initialize-BrainzieLanding      -> TURNSTILE_SECRET

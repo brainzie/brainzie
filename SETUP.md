@@ -26,10 +26,40 @@ wrangler.toml  SETUP.md          (repo root — not published)
 > root** (sibling of `wrangler.toml`), and deploys run **without** a positional
 > directory — the module does this correctly.
 
-GitHub remains the source of truth (push as usual), but **pushing does not
-publish** — publishing is `Publish-BrainzieLanding`. The `build-courses` GitHub
-Action still rebuilds the Blazor apps into `site/courses/<slug>/app` when
-`apps-src/**` changes.
+## Publishing — git integration
+
+**Pushing `main` publishes.** The Pages project `brainzie` is connected to the
+GitHub repo; Cloudflare deploys `site/` + `functions/` on every push (no build
+command — the root `wrangler.toml` is the source of truth, and `functions/` is
+picked up automatically). Other branches get preview URLs
+(`<branch>.brainzie.pages.dev`). The `build-courses` GitHub Action still
+rebuilds the Blazor apps into `site/courses/<slug>/app` when `apps-src/**`
+changes — its commit then triggers the deploy.
+
+`Publish-BrainzieLanding` remains only as a manual escape hatch; the module's
+`Initialize-*` commands are still how KV, Turnstile and Zoho secrets are
+provisioned (secrets persist on the project between deploys).
+
+### One-time cutover to git-connected deploys
+
+Direct-upload Pages projects cannot be converted, so the existing `brainzie`
+project must be recreated:
+
+1. Make sure `wrangler.toml` has the **real** LEADS KV namespace id and
+   `ZOHO_CLIENT_ID`/`ZOHO_ACCOUNT_ID` (no `REPLACE_WITH_*` placeholders) —
+   dashboard → Storage & Databases → KV shows the id. Commit and push.
+2. Note the current custom domains, then **delete** the `brainzie` project and
+   recreate it: **Workers & Pages → Create → Pages → Connect to Git** →
+   `brainzie/brainzie`, project name **`brainzie`**, production branch `main`,
+   **no framework preset / empty build command**.
+3. Re-add the custom domains (`brainzie.co.uk`, `www.brainzie.co.uk`) — the
+   zone is in this account, so DNS is updated for you.
+4. Re-upload the secrets (they were deleted with the old project):
+   `Initialize-BrainzieLanding` (Turnstile) and re-run step 5 of the Zoho
+   setup below — or paste `TURNSTILE_SECRET`, `ZOHO_CLIENT_SECRET`,
+   `ZOHO_REFRESH_TOKEN` in the dashboard (Settings → Variables and secrets).
+5. Push any commit and verify the deploy, the contact form, and the Blazor
+   course demos.
 
 ## The module
 
