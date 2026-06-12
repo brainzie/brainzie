@@ -8,7 +8,7 @@
     # CLOUDFLARE_ACCOUNT_ID to it so a multi-account wrangler identity can never deploy this
     # site into the wrong account, and refuse to run while it is empty.
     # Initialize-BrainzieLanding pins and commits it for you.
-    CloudflareAccountId = ''
+    CloudflareAccountId = '8c7badd70917846a5b0b65e6e61af5bf'
 
     # Informational — the production host. Custom domains for this project are managed in the
     # Cloudflare dashboard (see SETUP.md); the deploy does not attach them.
