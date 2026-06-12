@@ -48,7 +48,11 @@ Publish-BrainzieLanding -BuildCourses     # rebuild all course apps first
 > that owns the brainzie.co.uk zone — NOT the emsurge account whose
 > `CLOUDFLARE_API_TOKEN` may be set in your shell. The module clears that
 > variable automatically and uses your `npx wrangler login` identity
-> (or pass `-ApiToken` with a brainzie-account token).
+> (or pass `-ApiToken` with a brainzie-account token). The Brainzie **account
+> id** is public configuration, not a secret: it lives ONLY in the committed
+> `deploy.config.psd1` (never a secret store or a required env var).
+> `Initialize-BrainzieLanding` pins and commits it; deploys refuse to run
+> while it is empty.
 
 ---
 
@@ -60,6 +64,9 @@ npx wrangler login          # browser sign-in to the BRAINZIE Cloudflare account
 Import-Module ./scripts/BrainzieLanding/BrainzieLanding.psd1
 Initialize-BrainzieLanding
 ```
+This first pins the Brainzie Cloudflare **account id** into the committed
+`deploy.config.psd1` (prompting for it if needed) and commits that file, then
+scaffolds the Pages project and KV namespace.
 Copy the returned KV namespace **id** into `wrangler.toml` → `[[kv_namespaces]] id = "…"`.
 
 ### 2. First deploy (to the *.pages.dev URL)

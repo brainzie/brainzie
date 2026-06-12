@@ -9,6 +9,11 @@
     explicit -ApiToken (assumed to be a brainzie-account token), clear the
     environment variables for this session so wrangler falls back to the
     `npx wrangler login` browser identity.
+
+    It then pins CLOUDFLARE_ACCOUNT_ID from the COMMITTED deploy.config.psd1 —
+    the ONLY place the account id lives (public configuration, never a secret
+    store or a required env var) — and refuses to run while it is unpinned.
+    Initialize-BrainzieLanding pins and commits the id.
 #>
 function Assert-BrainzieCloudflareIdentity {
     param([string]$ApiToken = '')
@@ -35,6 +40,6 @@ function Assert-BrainzieCloudflareIdentity {
         $env:CLOUDFLARE_ACCOUNT_ID = $config.CloudflareAccountId
     }
     else {
-        Write-BrainzieWarn 'deploy.config.psd1 has no CloudflareAccountId pinned — paste the Brainzie account id there to lock deploys to the right account.'
+        throw 'deploy.config.psd1 has no CloudflareAccountId pinned. The Brainzie account id lives ONLY in the committed deploy.config.psd1 (it is public configuration, never a secret). Run Initialize-BrainzieLanding to pin and commit it.'
     }
 }

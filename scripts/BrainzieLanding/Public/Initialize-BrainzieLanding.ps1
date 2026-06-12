@@ -9,6 +9,11 @@
   that owns the brainzie.co.uk zone). The function refuses the foreign emsurge
   CLOUDFLARE_API_TOKEN that is usually set in this shell.
 
+  First it pins the Brainzie Cloudflare account id into the COMMITTED
+  deploy.config.psd1 (the ONLY place it lives — public configuration, never a
+  secret store or a required env var) and commits that file, so every deploy
+  fails fast into the RIGHT account.
+
   After it succeeds:
     1. Paste the printed KV namespace id into wrangler.toml -> [[kv_namespaces]] id.
     2. (Email) Initialize-BrainzieZohoMailer …
@@ -32,6 +37,34 @@ function Initialize-BrainzieLanding {
         [switch]$SkipTurnstileSecret,
         [string]$ApiToken = ''
     )
+
+    # --- Public deploy config: pin the Brainzie Cloudflare account id ---------
+    # The account id is PUBLIC configuration, not a secret: the committed
+    # deploy.config.psd1 is its ONLY home (never a secret store or a required env
+    # var). Deploys refuse to run while it is empty, so pin + commit it first.
+    $repoRoot = Get-BrainzieRepoRoot
+    $cfgPath  = Join-Path $repoRoot 'deploy.config.psd1'
+    $config   = Import-PowerShellDataFile -Path $cfgPath
+    if (-not $config.CloudflareAccountId) {
+        Write-BrainzieStep 'Pinning the Brainzie Cloudflare account id (deploy.config.psd1)'
+        # Deliberately NOT the bare CLOUDFLARE_ACCOUNT_ID env var — on this machine
+        # that usually belongs to the emsurge account (see Assert-BrainzieCloudflareIdentity).
+        $acct = [Environment]::GetEnvironmentVariable('BRAINZIE_CLOUDFLARE_ACCOUNT_ID')
+        if (-not $acct) {
+            Write-BrainzieInfo 'Account ID: Cloudflare dashboard -> Workers & Pages -> right sidebar "Account ID" (the BRAINZIE account).'
+            $acct = Read-Host 'Paste the Brainzie Cloudflare account id'
+        }
+        if (-not $acct) { throw 'No account id provided — deploys refuse to run until CloudflareAccountId is pinned in deploy.config.psd1. Re-run Initialize-BrainzieLanding.' }
+        $raw     = Get-Content -LiteralPath $cfgPath -Raw
+        $updated = $raw -replace "CloudflareAccountId\s*=\s*'[^']*'", "CloudflareAccountId = '$acct'"
+        if ($updated -eq $raw) { throw "Could not find the CloudflareAccountId entry in $cfgPath to update — fix the file by hand." }
+        Set-Content -LiteralPath $cfgPath -Value $updated -NoNewline
+        # Pathspec commit: only deploy.config.psd1, never unrelated work in progress.
+        git -C $repoRoot commit -m 'Deploy: pin the Brainzie Cloudflare account id in deploy.config.psd1' -- $cfgPath | Out-Null
+        if ($LASTEXITCODE -eq 0) { Write-BrainzieOk "Pinned + committed the Brainzie Cloudflare account id: $acct" }
+        else { Write-BrainzieWarn 'Pinned the account id in deploy.config.psd1 but the git commit failed — commit that file manually.' }
+    }
+    else { Write-BrainzieOk "Brainzie Cloudflare account pinned: $($config.CloudflareAccountId)" }
 
     Assert-BrainzieCloudflareIdentity -ApiToken $ApiToken
 
